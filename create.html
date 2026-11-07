@@ -76,6 +76,21 @@
     .toast.show { opacity: 1; transform: translate(-50%, 0); }
     h2 { font-family: "Yatra One", serif; font-weight: 400; color: var(--maroon); font-size: 1.3rem; margin-bottom: 12px; }
     .msg { width: 100%; min-height: 96px; font-size: .92rem; }
+    input.key { width: 100%; font: inherit; padding: 10px 14px; border-radius: 12px; border: 2px solid rgba(201, 52, 32, .35); }
+    .sum { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 8px; margin-top: 14px; }
+    .sum div { background: #fff; border: 1.5px solid rgba(233, 164, 23, .6); border-radius: 12px; padding: 8px; text-align: center; }
+    .sum b { display: block; font-size: 1.5rem; color: var(--red); }
+    .sum small { font-size: .78rem; opacity: .8; }
+    .st { display: flex; flex-wrap: wrap; gap: 6px; margin: 2px 0 8px; }
+    .chip { font-size: .78rem; padding: 2px 10px; border-radius: 999px; background: #f3e6d0; }
+    .chip.open { background: #e3f1ff; color: #144f8a; }
+    .chip.no-open { background: #f4f4f4; color: #777; }
+    .chip.yes { background: #dff4e5; color: #1d7339; }
+    .chip.maybe { background: #fff1cc; color: #8a5a00; }
+    .chip.nope { background: #fde2dd; color: #9b2b1b; }
+    .note { font-size: .85rem; font-style: italic; margin: -4px 0 8px; opacity: .85; }
+    #others li { background: #fff; border-radius: 12px; padding: 10px 14px; border: 1.5px solid rgba(233, 164, 23, .6); }
+    .err { color: var(--red); font-size: .88rem; margin-top: 8px; }
   </style>
 </head>
 <body>
@@ -96,6 +111,20 @@
           <button type="button" data-lang="hi" aria-pressed="true">हिंदी</button>
           <button type="button" data-lang="en" aria-pressed="false">English</button>
         </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>📊 किसने खोला · कौन आ रहा है</h2>
+      <label for="key">एडमिन कुंजी · Admin key</label>
+      <input id="key" class="key" type="password" autocomplete="off" placeholder="Vercel में रखी ADMIN_KEY" />
+      <div class="row"><button class="btn btn-gold" id="refresh" type="button">🔄 स्थिति देखें · Refresh</button></div>
+      <p class="err" id="err" hidden></p>
+      <div class="sum" id="sum" hidden></div>
+      <small class="help">हर नाम के नीचे दिखेगा कि उन्होंने निमंत्रण खोला या नहीं, और उनका उत्तर। जिन्होंने किसी और नाम से उत्तर दिया, वे नीचे “अन्य उत्तर” में दिखेंगे।</small>
+      <div id="othersBox" hidden>
+        <h2 style="margin-top:16px">अन्य उत्तर · Other replies</h2>
+        <ul id="others" style="list-style:none;display:grid;gap:10px"></ul>
       </div>
     </section>
 
@@ -156,10 +185,66 @@
       return el;
     }
 
+    let status = null; // name -> { opens, lastOpen, rsvp }
+    const fmt = (iso) => {
+      try { return new Date(iso).toLocaleString("hi-IN", { day: "numeric", month: "short", hour: "numeric", minute: "2-digit" }); } catch (_) { return ""; }
+    };
+    const RS = { yes: ["yes", "✅ आएँगे"], maybe: ["maybe", "🤔 शायद"], no: ["nope", "❌ नहीं आ पाएँगे"] };
+    function chipsFor(g) {
+      const box = document.createElement("div");
+      const st = document.createElement("div"); st.className = "st";
+      const chip = (cls, t) => { const c = document.createElement("span"); c.className = "chip " + cls; c.textContent = t; st.appendChild(c); };
+      if (g && g.opens) chip("open", `👁️ खोला · ${g.opens} बार · ${fmt(g.lastOpen)}`);
+      else chip("no-open", "⏳ अभी नहीं खोला");
+      if (g && g.rsvp) {
+        const [cls, t] = RS[g.rsvp.status] || ["", g.rsvp.status];
+        chip(cls, t + (g.rsvp.people ? ` · ${g.rsvp.people} लोग` : ""));
+      }
+      box.appendChild(st);
+      if (g && g.rsvp && g.rsvp.note) { const n = document.createElement("p"); n.className = "note"; n.textContent = "“" + g.rsvp.note + "”"; box.appendChild(n); }
+      return box;
+    }
+    async function refresh() {
+      const key = $("key").value.trim();
+      store.set("mk-key", key);
+      $("err").hidden = true;
+      if (!key) { $("err").hidden = false; $("err").textContent = "कुंजी लिखें · Enter the admin key"; return; }
+      try {
+        const r = await fetch("api/status", { headers: { "x-admin-key": key }, cache: "no-store" });
+        const j = await r.json().catch(() => ({}));
+        if (!r.ok) throw new Error(r.status === 401 ? "कुंजी गलत है · Wrong key" : r.status === 503 ? "स्टोरेज या ADMIN_KEY अभी सेट नहीं है · Storage / ADMIN_KEY not set up yet" : "त्रुटि · Error " + r.status);
+        status = {};
+        (j.guests || []).forEach((g) => { status[g.name] = g; });
+        render();
+        toast("स्थिति अपडेट ✓");
+      } catch (e) {
+        $("err").hidden = false;
+        $("err").textContent = e.message === "Failed to fetch" ? "सर्वर से जुड़ नहीं पाए · Could not reach the server" : e.message;
+      }
+    }
+    function renderSummary(names) {
+      if (!status) return;
+      const all = Object.values(status);
+      const opened = names.filter((n) => status[n] && status[n].opens).length;
+      const by = (s) => all.filter((g) => g.rsvp && g.rsvp.status === s);
+      const ppl = by("yes").reduce((a, g) => a + (g.rsvp.people || 0), 0);
+      const sum = $("sum"); sum.hidden = false; sum.textContent = "";
+      [[`${opened}/${names.length}`, "खोला · opened"], [by("yes").length, "आएँगे · coming"], [ppl, "कुल लोग · people"], [by("maybe").length, "शायद · maybe"], [by("no").length, "नहीं · not coming"]]
+        .forEach(([v, l]) => { const d = document.createElement("div"); const b = document.createElement("b"); b.textContent = v; const sm = document.createElement("small"); sm.textContent = l; d.append(b, sm); sum.appendChild(d); });
+      // replies under names that are not in the list (e.g. typed by the guest)
+      const others = all.filter((g) => g.rsvp && !names.includes(g.name));
+      $("othersBox").hidden = others.length === 0;
+      const ul = $("others"); ul.textContent = "";
+      others.forEach((g) => { const li = document.createElement("li"); const nm = document.createElement("div"); nm.className = "nm"; nm.textContent = g.name; li.append(nm, chipsFor(g)); ul.appendChild(li); });
+    }
+    $("key").value = store.get("mk-key") || "";
+    $("refresh").addEventListener("click", refresh);
+
     function render() {
       const names = [...new Set($("names").value.split(/\n|,/).map(clean).filter(Boolean))];
       const list = $("list"); list.textContent = "";
       $("empty").hidden = names.length > 0;
+      renderSummary(names);
       names.forEach((name) => {
         const li = document.createElement("li");
         const nm = document.createElement("div"); nm.className = "nm"; nm.textContent = name;
@@ -171,7 +256,8 @@
           btn("btn-line", "🔗 लिंक कॉपी", () => copy(linkFor(name))),
           btn("btn-line", "👁️ देखें", null, linkFor(name)),
         );
-        li.append(nm, url, acts);
+        if (status) li.append(nm, chipsFor(status[name]), url, acts);
+        else li.append(nm, url, acts);
         list.appendChild(li);
       });
     }

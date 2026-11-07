@@ -8,7 +8,8 @@
   <meta property="og:type" content="website" />
   <meta property="og:title" content="🪔 सादर आमंत्रण · एकादशी उद्यापन एवं अखण्ड हरिकीर्तन" />
   <meta property="og:description" content="19–21 नवंबर 2026 · ग्राम मुर्हीं, हमारी जन्मभूमि। आप सभी सपरिवार सादर आमंत्रित हैं।" />
-  <meta property="og:image" content="assets/og.jpg" />
+  <meta property="og:image" content="https://ekadashipuja.vercel.app/assets/og.jpg" />
+  <meta property="og:url" content="https://ekadashipuja.vercel.app/" />
   <meta name="theme-color" content="#6b0f0a" />
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🪔</text></svg>" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -79,6 +80,7 @@
           <p><b>21</b> वेदी पूजन, हवन पूर्णाहुति एवं हरिनाम अमृत भोज</p>
           <p class="g-status-call">📞 +91 95727 74629 <i>✦</i> +91 98010 36864</p>
         </div>
+        <p class="g-today" id="gateToday" hidden></p>
         <button id="openBtn" class="btn btn-gold pulse" type="button" data-en="🪔 Open Invitation">🪔 निमंत्रण खोलें</button>
         <p class="hint">Tap to open the invitation 🎵</p>
       </div>
@@ -105,6 +107,7 @@
     <button class="bell bell-right" type="button" aria-label="घंटी बजाएं" data-en-label="Ring the bell"><svg viewBox="0 0 60 120"><use href="#bellShape" /></svg></button>
 
     <section class="hero">
+      <div class="today-strip" id="todayStrip" hidden></div>
       <div class="mantra-box reveal">
         <p class="mantra">॥ श्री गणेशाय नमः ॥</p>
         <p class="mantra">॥ ॐ नमो भगवते वासुदेवाय नमः ॥</p>
@@ -298,7 +301,7 @@
 
     <section class="card card-dark reveal center">
       <span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span>
-      <h2 data-en="Countdown to the Auspicious Day">शुभ घड़ी में शेष</h2>
+      <h2 id="cdTitle" data-en="Countdown to the Auspicious Day">शुभ घड़ी में शेष</h2>
       <div class="countdown" id="countdown">
         <div><span id="cdD">0</span><small data-en="Days">दिन</small></div>
         <div><span id="cdH">00</span><small data-en="Hours">घंटे</small></div>
@@ -306,13 +309,14 @@
         <div><span id="cdS">00</span><small data-en="Secs">सेकंड</small></div>
       </div>
       <p class="cd-done" id="cdDone" hidden data-en="🙏 The sacred ceremony has begun — Jai Shri Hari!">🙏 पावन अनुष्ठान आरंभ हो चुका है — जय श्री हरि!</p>
+      <div class="today-box" id="todayBox" hidden></div>
       <p class="cd-sub" data-en="19 – 21 November 2026">19 – 21 नवंबर 2026</p>
     </section>
 
     <section class="card reveal">
       <span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span>
       <h2 data-en="Programme">कार्यक्रम विवरण</h2>
-      <ol class="timeline">
+      <ol class="timeline" id="timeline">
         <li class="reveal">
           <div class="date"><b>19</b><small data-en="Nov">नवंबर</small></div>
           <div class="event">
@@ -337,6 +341,36 @@
       </ol>
       <div class="actions">
         <a id="calBtn" class="btn btn-outline" target="_blank" rel="noopener" data-en="📆 Add to Calendar">📆 कैलेंडर में जोड़ें</a>
+      </div>
+    </section>
+
+    <section class="card reveal center rsvp" id="rsvpCard">
+      <span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span>
+      <h2 data-en="Will You Join Us?">क्या आप पधारेंगे?</h2>
+      <p class="rsvp-intro" data-en="Please let us know, so that we can make proper arrangements for everyone.">कृपया हमें बताएँ, ताकि हम सबके लिए उचित व्यवस्था कर सकें।</p>
+      <form class="rsvp-form" id="rsvpForm" novalidate>
+        <label class="rsvp-field"><span data-en="Your name">आपका नाम</span><input id="rsvpName" maxlength="60" autocomplete="name" /></label>
+        <div class="rsvp-choices" role="radiogroup" aria-label="उत्तर" data-en-label="Reply">
+          <button type="button" class="rc yes" role="radio" aria-checked="false" data-status="yes"><i>🙏</i><b data-en="Yes, we'll come">हाँ, हम आएँगे</b></button>
+          <button type="button" class="rc maybe" role="radio" aria-checked="false" data-status="maybe"><i>🤔</i><b data-en="Maybe">शायद</b></button>
+          <button type="button" class="rc no" role="radio" aria-checked="false" data-status="no"><i>🙏🏻</i><b data-en="Can't make it">नहीं आ पाएँगे</b></button>
+        </div>
+        <div class="rsvp-people" id="rsvpPeople">
+          <span data-en="How many people?">कितने लोग आएँगे?</span>
+          <div class="stepper">
+            <button type="button" id="pplMinus" aria-label="कम करें" data-en-label="Fewer">−</button>
+            <output id="pplCount">1</output>
+            <button type="button" id="pplPlus" aria-label="बढ़ाएँ" data-en-label="More">+</button>
+          </div>
+        </div>
+        <textarea id="rsvpNote" maxlength="300" rows="2"></textarea>
+        <button type="submit" class="btn btn-red" id="rsvpSend" data-en="✉️ Send Reply">✉️ उत्तर भेजें</button>
+        <p class="rsvp-msg" id="rsvpMsg" role="status" aria-live="polite"></p>
+      </form>
+      <div class="rsvp-done" id="rsvpDone" hidden>
+        <div class="rsvp-check" aria-hidden="true">✓</div>
+        <p class="rsvp-thanks" id="rsvpThanks"></p>
+        <button type="button" class="btn btn-outline" id="rsvpEdit" data-en="✏️ Change reply">✏️ उत्तर बदलें</button>
       </div>
     </section>
 
@@ -391,6 +425,18 @@
         <p class="fam-title" data-en="A Request from the Little Ones">बाल मनुहार</p>
         <p class="manuhar" data-en="“Please, please do come to the holy Harikirtan at our home!” 🙏">“हमारे घर के पावन हरिकीर्तन में आप ज़रूर-ज़रूर आना!” 🙏</p>
         <p class="fam-chips"><span data-en="Shivansh">शिवांश</span><span data-en="Shiwangi">शिवांगी</span><span data-en="Advik">अद्विक</span><span data-en="Kavya">काव्या</span><span data-en="Shanvi">शान्वी</span><span data-en="Shreeja">श्रीजा</span></p>
+      </div>
+    </section>
+
+    <section class="card reveal center photo-card" id="photoCard">
+      <span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span>
+      <h2 data-en="Your Personal Card">आपका व्यक्तिगत कार्ड</h2>
+      <p class="rsvp-intro" data-en="A card with your name — put it on your WhatsApp status and share the joy!">आपके नाम वाला कार्ड — इसे WhatsApp स्टेटस पर लगाएँ और खुशी बाँटें!</p>
+      <label class="rsvp-field"><span data-en="Name on the card">कार्ड पर नाम</span><input id="cardName" maxlength="40" /></label>
+      <div class="pc-frame"><img id="cardImg" alt="" /><div class="pc-loading" id="cardLoading">🪔</div></div>
+      <div class="actions">
+        <button type="button" class="btn btn-gold" id="cardShare" data-en="📤 Share / Status">📤 शेयर / स्टेटस</button>
+        <button type="button" class="btn btn-outline" id="cardSave" data-en="📥 Download">📥 डाउनलोड</button>
       </div>
     </section>
 

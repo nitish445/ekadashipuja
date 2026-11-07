@@ -775,6 +775,296 @@
     paintDiyas();
   }
 
+  // ----- Tell the host this guest opened the invitation (once per visit) -----
+  if (guest && !capture && !sess.get("tracked")) {
+    sess.set("tracked", "1");
+    fetch("api/track", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name: guest }),
+      keepalive: true,
+    }).catch(() => { /* offline or storage not set up */ });
+  }
+
+  // ----- Day-by-day: before / during (19, 20, 21 Nov) / after the ceremony -----
+  // Preview any day with ?today=2026-11-20
+  const DAYS = [
+    { date: "2026-11-19", hi: ["प्रथम दिवस · गुरुवार", "वेदी निर्माण एवं अखण्ड हरिकीर्तन"], en: ["Day 1 · Thursday", "Vedi Nirman & Akhand Harikirtan"] },
+    { date: "2026-11-20", hi: ["द्वितीय दिवस · शुक्रवार", "वेदी आवाहन पूजन एवं एकादशी महात्मकथा"], en: ["Day 2 · Friday", "Vedi Avahan Pujan & Ekadashi Mahatma Katha"] },
+    { date: "2026-11-21", hi: ["तृतीय दिवस · शनिवार", "वेदी पूजन, हवन पूर्णाहुति एवं हरिनाम अमृत भोज (1 बजे से)"], en: ["Day 3 · Saturday", "Vedi Pujan, Havan Purnahuti & Harinam Amrit Bhoj (from 1 PM)"] },
+  ];
+  const todayIST = () => {
+    const t = qs.get("today");
+    if (t && /^\d{4}-\d{2}-\d{2}$/.test(t)) return t;
+    return new Date(Date.now() + 5.5 * 3600e3).toISOString().slice(0, 10);
+  };
+  // "before" | 0 | 1 | 2 | "after"
+  function phase() {
+    const d = todayIST();
+    if (d < DAYS[0].date) return "before";
+    if (d > DAYS[2].date) return "after";
+    return DAYS.findIndex((x) => x.date === d);
+  }
+  let shownPhase = null;
+  function renderDay() {
+    const ph = capture ? "before" : phase();
+    shownPhase = ph;
+    const strip = $("todayStrip"), gt = $("gateToday"), box = $("todayBox");
+    const items = document.querySelectorAll("#timeline li");
+    items.forEach((li, i) => {
+      li.classList.toggle("today", ph === i);
+      li.classList.toggle("done", ph === "after" || (typeof ph === "number" && i < ph));
+    });
+    if (ph === "before") {
+      strip.hidden = true; if (gt) gt.hidden = true; box.hidden = true;
+      return;
+    }
+    clearInterval(timer);
+    $("countdown").hidden = true;
+    $("cdDone").hidden = true;
+    $("rsvpCard").hidden = ph === "after";
+    box.hidden = false;
+    strip.hidden = false;
+    if (ph === "after") {
+      const msg = T("🙏 पावन अनुष्ठान सम्पन्न हुआ", "🙏 The sacred ceremony is complete");
+      strip.innerHTML = `<b>${msg}</b><span>${T("आपकी उपस्थिति एवं शुभकामनाओं के लिए हृदय से धन्यवाद", "Heartfelt thanks for your presence and blessings")}</span>`;
+      setLabel($("cdTitle"), "अनुष्ठान सम्पन्न", "Ceremony Complete");
+      box.innerHTML = `<p class="tb-done">${T("भगवान श्री हरि विष्णु की कृपा से तीनों दिवस का अनुष्ठान सकुशल सम्पन्न हुआ। आपकी उपस्थिति और आशीर्वाद के लिए धन्यवाद। जय श्री हरि!", "By the grace of Bhagwan Shri Hari Vishnu, all three days were completed successfully. Thank you for your presence and blessings. Jai Shri Hari!")}</p>`;
+      if (gt) { gt.hidden = false; gt.textContent = msg; }
+    } else {
+      const d = DAYS[ph], next = DAYS[ph + 1];
+      const L = (x) => (lang === "en" ? x.en : x.hi);
+      strip.innerHTML = `<b><i class="live"></i>${T("आज", "Today")}: ${L(d)[0]}</b><span>${L(d)[1]}</span>`;
+      setLabel($("cdTitle"), "आज का कार्यक्रम", "Today's Programme");
+      box.innerHTML =
+        `<p class="tb-badge"><i class="live"></i>${T("अनुष्ठान जारी है", "Ceremony in progress")}</p>` +
+        `<p class="tb-day">${L(d)[0]}</p><p class="tb-what">${L(d)[1]}</p>` +
+        (next ? `<p class="tb-next">${T("कल", "Tomorrow")}: ${L(next)[1]}</p>` : `<p class="tb-next">${T("आज अंतिम दिवस है — हरिनाम अमृत भोज में अवश्य पधारें 🙏", "Today is the final day — please join the Harinam Amrit Bhoj 🙏")}</p>`);
+      if (gt) { gt.hidden = false; gt.innerHTML = `<i class="live"></i>${T("आज", "Today")}: ${L(d)[1]}`; }
+    }
+  }
+  // move to the next day by itself if the page stays open over midnight
+  setInterval(() => { if (!capture && phase() !== shownPhase) renderDay(); }, 60000);
+
+  // ----- RSVP: will you come? -----
+  const RSVP_TEXT = {
+    yes: (n) => T(`धन्यवाद! 🙏 आपकी प्रतीक्षा रहेगी — ${n} ${n > 1 ? "लोग" : "व्यक्ति"}`, `Thank you! 🙏 We look forward to welcoming you — ${n} ${n > 1 ? "people" : "person"}`),
+    maybe: () => T("धन्यवाद! 🙏 आशा है आप अवश्य आ पाएँगे", "Thank you! 🙏 We hope you can make it"),
+    no: () => T("कोई बात नहीं 🙏 आपकी शुभकामनाएँ हमारे साथ हैं", "No worries 🙏 Your good wishes are with us"),
+  };
+  let rsvpStatus = null, people = 1;
+  let saved = (() => { try { return JSON.parse(store.get("rsvp")); } catch (_) { return null; } })();
+  $("rsvpName").value = (saved && saved.name) || guest;
+  function setStatus(st) {
+    rsvpStatus = st;
+    document.querySelectorAll(".rc").forEach((b) => b.setAttribute("aria-checked", String(b.dataset.status === st)));
+    $("rsvpPeople").classList.toggle("off", st === "no");
+  }
+  function setPeople(n) { people = Math.min(50, Math.max(1, n)); $("pplCount").textContent = people; }
+  if (saved) { setStatus(saved.status); setPeople(saved.people || 1); $("rsvpNote").value = saved.note || ""; }
+  function showRsvpDone(entry) {
+    $("rsvpForm").hidden = true;
+    $("rsvpDone").hidden = false;
+    $("rsvpThanks").textContent = RSVP_TEXT[entry.status](entry.people);
+  }
+  function renderRsvpText() {
+    $("rsvpNote").placeholder = T("कोई संदेश या शुभकामना (वैकल्पिक)", "A message or blessing (optional)");
+    if (!$("rsvpDone").hidden && saved) $("rsvpThanks").textContent = RSVP_TEXT[saved.status](saved.people);
+  }
+  if (saved) showRsvpDone(saved);
+  document.querySelectorAll(".rc").forEach((b) => b.addEventListener("click", () => setStatus(b.dataset.status)));
+  $("pplMinus").addEventListener("click", () => setPeople(people - 1));
+  $("pplPlus").addEventListener("click", () => setPeople(people + 1));
+  $("rsvpEdit").addEventListener("click", () => { $("rsvpDone").hidden = true; $("rsvpForm").hidden = false; });
+  $("rsvpForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const msg = $("rsvpMsg");
+    const name = $("rsvpName").value.replace(/\s+/g, " ").trim();
+    if (!name) { msg.textContent = T("कृपया अपना नाम लिखें", "Please write your name"); $("rsvpName").focus(); return; }
+    if (!rsvpStatus) { msg.textContent = T("कृपया ऊपर से एक उत्तर चुनें", "Please choose a reply above"); return; }
+    const entry = { name, status: rsvpStatus, people: rsvpStatus === "no" ? 0 : people, note: $("rsvpNote").value.trim() };
+    $("rsvpSend").disabled = true;
+    msg.textContent = T("भेजा जा रहा है…", "Sending…");
+    try {
+      const r = await fetch("api/rsvp", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(entry) });
+      if (!r.ok) throw new Error(r.status);
+      store.set("rsvp", JSON.stringify(entry));
+      saved = entry;
+      msg.textContent = "";
+      showRsvpDone(entry);
+      if (entry.status !== "no") { bell(700, 0.3); burstPetals(24); }
+    } catch (_) {
+      // storage not set up or offline: send the same reply on WhatsApp instead
+      const label = { yes: T("हाँ, हम आएँगे", "Yes, we will come"), maybe: T("शायद", "Maybe"), no: T("नहीं आ पाएँगे", "Can't make it") }[entry.status];
+      const text = `${T("जय श्री हरि 🙏", "Jai Shri Hari 🙏")}\n${TITLE}\n\n${T("नाम", "Name")}: ${name}\n${T("उत्तर", "Reply")}: ${label}` +
+        (entry.people ? `\n${T("लोग", "People")}: ${entry.people}` : "") + (entry.note ? `\n${entry.note}` : "");
+      msg.innerHTML = "";
+      const a = document.createElement("a");
+      a.className = "btn btn-red";
+      a.target = "_blank"; a.rel = "noopener";
+      a.href = `https://wa.me/${PHONE}?text=` + encodeURIComponent(text);
+      a.textContent = T("💬 WhatsApp पर उत्तर भेजें", "💬 Send reply on WhatsApp");
+      msg.append(T("उत्तर सहेजा नहीं जा सका। कृपया WhatsApp से भेजें:", "Couldn't save the reply. Please send it on WhatsApp:"), document.createElement("br"), a);
+    } finally {
+      $("rsvpSend").disabled = false;
+    }
+  });
+
+  // ----- Personal card (image with the guest's name) for WhatsApp status -----
+  const cardName = $("cardName");
+  cardName.value = guest || store.get("cardName") || "";
+  let cardBlob = null, cardTimer, cardBusy = 0;
+  const vishnuImg = new Image();
+  vishnuImg.src = "assets/vishnu.webp";
+  const imgReady = new Promise((r) => { vishnuImg.onload = r; vishnuImg.onerror = r; });
+  function fitText(ctx, text, maxW, size, font) {
+    let s = size;
+    ctx.font = `${s}px ${font}`;
+    while (ctx.measureText(text).width > maxW && s > 30) { s -= 2; ctx.font = `${s}px ${font}`; }
+    return s;
+  }
+  async function drawCard() {
+    const job = ++cardBusy;
+    try { await Promise.all([document.fonts.load('60px "Yatra One"'), document.fonts.load('40px "Kalam"'), document.fonts.load('600 40px "Poppins"')]); } catch (_) { /* fallback fonts */ }
+    await imgReady;
+    if (job !== cardBusy) return; // a newer name was typed
+    const W = 1080, H = 1920, cx = 540, cy = 700;
+    const cv = document.createElement("canvas");
+    cv.width = W; cv.height = H;
+    const c = cv.getContext("2d");
+    // background
+    let g = c.createRadialGradient(cx, cy, 50, cx, cy, 1300);
+    g.addColorStop(0, "#a8301a"); g.addColorStop(0.35, "#6b0f0a"); g.addColorStop(0.75, "#2a0402"); g.addColorStop(1, "#140100");
+    c.fillStyle = g; c.fillRect(0, 0, W, H);
+    // light rays
+    c.save(); c.translate(cx, cy);
+    for (let i = 0; i < 60; i++) {
+      c.rotate((Math.PI * 2) / 60);
+      c.beginPath(); c.moveTo(0, 0); c.lineTo(-22, -1400); c.lineTo(22, -1400); c.closePath();
+      c.fillStyle = "rgba(255, 205, 110, 0.05)"; c.fill();
+    }
+    c.restore();
+    // marigold toran
+    for (let x = -20; x < W + 40; x += 34) {
+      const y = 34 + 20 * Math.abs(Math.sin((x / W) * Math.PI * 3));
+      c.beginPath(); c.arc(x, y, 20, 0, Math.PI * 2);
+      c.fillStyle = (x / 34) % 2 ? "#ffb000" : "#ff7a1a"; c.fill();
+      c.beginPath(); c.arc(x, y, 6, 0, Math.PI * 2); c.fillStyle = "#c93420"; c.fill();
+    }
+    [120, 380, 700, 960].forEach((x, k) => {
+      for (let j = 0; j < (k % 2 ? 3 : 5); j++) {
+        c.beginPath(); c.arc(x, 90 + j * 34, 16, 0, Math.PI * 2);
+        c.fillStyle = j % 2 ? "#ffb000" : "#ff7a1a"; c.fill();
+      }
+    });
+    c.textAlign = "center"; c.textBaseline = "middle";
+    c.fillStyle = "#ffd970"; c.font = '52px "Yatra One"';
+    c.fillText("॥ श्री गणेशाय नमः ॥", cx, 300);
+    // glow + medallion
+    g = c.createRadialGradient(cx, cy, 200, cx, cy, 460);
+    g.addColorStop(0, "rgba(255, 220, 130, 0.55)"); g.addColorStop(1, "rgba(255, 170, 60, 0)");
+    c.fillStyle = g; c.beginPath(); c.arc(cx, cy, 460, 0, Math.PI * 2); c.fill();
+    const R = 250;
+    g = c.createLinearGradient(cx - R, cy - R, cx + R, cy + R);
+    g.addColorStop(0, "#a86b05"); g.addColorStop(0.3, "#ffd970"); g.addColorStop(0.55, "#e9a417"); g.addColorStop(0.7, "#fff1b8"); g.addColorStop(1, "#b77a08");
+    c.fillStyle = "#4e0a05"; c.beginPath(); c.arc(cx, cy, R + 22, 0, Math.PI * 2); c.fill();
+    c.fillStyle = g; c.beginPath(); c.arc(cx, cy, R + 14, 0, Math.PI * 2); c.fill();
+    c.save(); c.beginPath(); c.arc(cx, cy, R, 0, Math.PI * 2); c.clip();
+    g = c.createRadialGradient(cx, cy - 80, 20, cx, cy, R);
+    g.addColorStop(0, "#fff6d8"); g.addColorStop(0.45, "#ffd58f"); g.addColorStop(1, "#f39a3d");
+    c.fillStyle = g; c.fillRect(cx - R, cy - R, R * 2, R * 2);
+    if (vishnuImg.naturalWidth) {
+      const iw = R * 2 * 1.16, ih = iw * (vishnuImg.naturalHeight / vishnuImg.naturalWidth);
+      c.drawImage(vishnuImg, cx - iw / 2, cy - R + R * 2 * 0.04, iw, ih);
+    }
+    c.restore();
+    // name
+    const name = cardName.value.replace(/\s+/g, " ").trim();
+    c.fillStyle = "#fff7e8"; c.font = '50px "Yatra One"';
+    c.fillText(name ? T("विशेष अतिथि", "Special Guest") : T("सादर आमंत्रण", "You are invited"), cx, 1050);
+    if (name) {
+      const s = fitText(c, name, 960, 120, '"Yatra One"');
+      g = c.createLinearGradient(cx - 450, 0, cx + 450, 0);
+      g.addColorStop(0, "#b77a08"); g.addColorStop(0.3, "#ffd970"); g.addColorStop(0.5, "#fff6d2"); g.addColorStop(0.7, "#e9a417"); g.addColorStop(1, "#b77a08");
+      c.shadowColor = "rgba(255, 190, 60, 0.6)"; c.shadowBlur = 30;
+      c.fillStyle = g; c.font = `${s}px "Yatra One"`;
+      c.fillText(name, cx, 1160);
+      c.shadowBlur = 0;
+    }
+    // divider
+    g = c.createLinearGradient(140, 0, 940, 0);
+    g.addColorStop(0, "rgba(233,164,23,0)"); g.addColorStop(0.5, "#ffd970"); g.addColorStop(1, "rgba(233,164,23,0)");
+    c.fillStyle = g; c.fillRect(140, 1250, 800, 3);
+    c.fillStyle = "#e9a417"; c.beginPath(); c.arc(cx, 1251, 9, 0, Math.PI * 2); c.fill();
+    // ceremony
+    c.fillStyle = "#fff7e8"; c.font = '72px "Yatra One"';
+    c.fillText(T("एकादशी उद्यापन एवं", "Ekadashi Udyapan &"), cx, 1350);
+    c.fillText(T("अखण्ड हरिकीर्तन", "Akhand Harikirtan"), cx, 1450);
+    // date pill
+    const dt = T("19 – 21 नवंबर 2026  ✦  ग्राम मुर्हीं", "19 – 21 November 2026  ✦  Village Murhi");
+    c.font = '600 42px "Poppins", "Kalam"';
+    const pw = c.measureText(dt).width + 90;
+    c.beginPath(); c.roundRect ? c.roundRect(cx - pw / 2, 1520, pw, 90, 45) : c.rect(cx - pw / 2, 1520, pw, 90);
+    c.fillStyle = "rgba(30, 2, 0, 0.5)"; c.fill();
+    c.strokeStyle = "rgba(233, 164, 23, 0.8)"; c.lineWidth = 3; c.stroke();
+    c.fillStyle = "#ffd970"; c.fillText(dt, cx, 1567);
+    c.fillStyle = "#fff7e8"; c.font = '46px "Kalam"';
+    c.fillText(T("आप भी सपरिवार सादर आमंत्रित हैं", "You and your family are warmly invited"), cx, 1680);
+    // golden ledge with diyas
+    g = c.createLinearGradient(0, 1780, 0, H);
+    g.addColorStop(0, "#ffd970"); g.addColorStop(0.08, "#e9a417"); g.addColorStop(0.12, "#6b0f0a"); g.addColorStop(1, "#2a0402");
+    c.fillStyle = g; c.fillRect(0, 1780, W, H - 1780);
+    [150, 330, 750, 930].forEach((x) => {
+      c.fillStyle = "#c2551d"; c.beginPath(); c.ellipse(x, 1782, 62, 34, 0, 0, Math.PI); c.fill();
+      const f = c.createRadialGradient(x, 1745, 2, x, 1745, 40);
+      f.addColorStop(0, "#fffbe0"); f.addColorStop(0.4, "#ffc94a"); f.addColorStop(1, "rgba(255, 120, 20, 0)");
+      c.fillStyle = f; c.beginPath(); c.ellipse(x, 1740, 18, 40, 0, 0, Math.PI * 2); c.fill();
+    });
+    c.fillStyle = "#ffd970"; c.font = '46px "Yatra One"';
+    c.fillText("शुभ  ✦  लाभ", cx, 1850);
+    c.fillStyle = "rgba(255, 247, 232, 0.6)"; c.font = '28px "Poppins"';
+    c.fillText(location.host || "ekadashipuja.vercel.app", cx, 1898);
+
+    cv.toBlob((b) => {
+      if (job !== cardBusy || !b) return;
+      cardBlob = b;
+      const old = $("cardImg").src;
+      $("cardImg").src = URL.createObjectURL(b);
+      if (old.startsWith("blob:")) URL.revokeObjectURL(old);
+      $("cardLoading").hidden = true;
+    }, "image/jpeg", 0.9);
+  }
+  const cardFile = () => new File([cardBlob], `Ekadashi-Nimantran-${(cardName.value.trim() || "card").replace(/[^\p{L}\p{N}]+/gu, "-")}.jpg`, { type: "image/jpeg" });
+  function saveCard() {
+    if (!cardBlob) return;
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(cardBlob);
+    a.download = cardFile().name;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+  }
+  $("cardSave").addEventListener("click", saveCard);
+  $("cardShare").addEventListener("click", async () => {
+    if (!cardBlob) return;
+    const file = cardFile();
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      try { await navigator.share({ files: [file], text: `🪔 ${TITLE} · 19–21 नवंबर 2026 · ग्राम मुर्हीं` }); } catch (_) { /* cancelled */ }
+    } else {
+      saveCard();
+      showToast(T("कार्ड डाउनलोड हो गया — अब इसे WhatsApp स्टेटस पर लगाएँ 🙏", "Card downloaded — now add it to your WhatsApp status 🙏"));
+    }
+  });
+  cardName.addEventListener("input", () => {
+    store.set("cardName", cardName.value);
+    clearTimeout(cardTimer);
+    cardTimer = setTimeout(drawCard, 350);
+  });
+  // draw it once the card is near the screen (saves work for people who never scroll there)
+  if ("IntersectionObserver" in window) {
+    const io = new IntersectionObserver((en) => { if (en.some((x) => x.isIntersecting)) { io.disconnect(); drawCard(); } }, { rootMargin: "600px" });
+    io.observe($("photoCard"));
+  } else drawCard();
+
   // ----- Apply language -----
   function applyLang() {
     document.documentElement.lang = lang;
@@ -794,6 +1084,9 @@
     document.querySelectorAll("#langSwitch button").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.lang === lang)));
     renderGuest();
     setReplyLink();
+    renderDay();
+    renderRsvpText();
+    if (cardBlob) drawCard();
   }
   document.querySelectorAll("#langSwitch button").forEach((b) =>
     b.addEventListener("click", () => {

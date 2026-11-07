@@ -30,3 +30,25 @@ Old `?guest=Name` links still work. Without a name, the page looks like the orig
 - Also inside the invitation: a shimmering “आदरणीय … — आपकी प्रतीक्षा रहेगी 🙏” banner.
 
 It is a static site with no build step, so it deploys to Vercel as is.
+
+## Who opened · RSVP · personal card · day-by-day
+
+- **Who opened**: each personal link reports when it is opened. `create.html` shows ✅/⏳ under every name.
+- **RSVP**: guests choose “हाँ / शायद / नहीं”, how many people, and an optional message.
+  `create.html` shows totals (how many are coming, how many people) and each reply.
+  If storage isn't set up yet, the guest is offered the same reply on WhatsApp instead.
+- **Personal card**: a 1080×1920 image with the guest's name for WhatsApp status (share or download).
+- **Day by day**: on 19, 20 and 21 Nov (India time) the page shows “आज …”, highlights today in the
+  programme and ticks the days already done; after the 21st it shows a thank-you. Preview any day
+  with `?today=2026-11-20`.
+
+### One-time setup on Vercel (for “who opened” and RSVP)
+
+1. Vercel → this project → **Storage** → **Create / Connect** → **Upstash for Redis** (free) →
+   connect it to this project. Vercel adds the connection settings by itself.
+2. Vercel → this project → **Settings → Environment Variables** → add `ADMIN_KEY` with a password
+   of your choice. Only people with this password can see the replies.
+3. **Redeploy** the project.
+4. Open `/create.html`, type the `ADMIN_KEY` in “एडमिन कुंजी” and tap **स्थिति देखें**.
+
+The functions live in `api/` (`track.js`, `rsvp.js`, `status.js`) and need no npm packages.
