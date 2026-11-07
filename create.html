@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>व्यक्तिगत निमंत्रण बनाएँ · Personal Invitations</title>
+  <meta name="robots" content="noindex" />
+  <meta name="theme-color" content="#6b0f0a" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🪔</text></svg>" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Yatra+One&family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    :root { --red: #c93420; --maroon: #7d1a10; --gold: #e9a417; --gold-light: #ffd970; --cream: #fff7e8; --text: #6e1a10; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { background: #2a0402; }
+    body {
+      min-height: 100vh;
+      font-family: "Poppins", system-ui, sans-serif;
+      color: var(--text);
+      background: radial-gradient(ellipse 90% 60% at 50% 0%, #9c2414 0%, #5e0d07 45%, #2a0402 100%) fixed;
+      padding: 28px 16px 60px;
+    }
+    .wrap { max-width: 640px; margin: 0 auto; }
+    header { text-align: center; color: var(--cream); margin-bottom: 20px; }
+    header .om { font-family: "Yatra One", serif; color: var(--gold-light); font-size: 1.1rem; }
+    h1 {
+      font-family: "Yatra One", serif; font-weight: 400;
+      font-size: clamp(1.9rem, 8vw, 2.6rem); line-height: 1.25; margin-top: 4px;
+      background: linear-gradient(100deg, #b77a08, #ffd970 30%, #fff6d2 45%, #e9a417 60%, #b77a08);
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+    }
+    header p { opacity: .85; font-size: .92rem; margin-top: 6px; }
+    .card {
+      background: #fff7e8; border-radius: 18px; padding: 20px 18px;
+      box-shadow: 0 0 0 3px var(--gold), 0 0 0 6px #fff3dc, 0 12px 40px rgba(0, 0, 0, .45);
+      margin-bottom: 22px;
+    }
+    label { display: block; font-weight: 600; margin-bottom: 6px; }
+    small.help { display: block; font-size: .8rem; opacity: .75; margin-top: 6px; }
+    textarea {
+      width: 100%; min-height: 120px; resize: vertical;
+      font: inherit; font-size: 1.05rem; color: var(--text);
+      padding: 12px 14px; border-radius: 12px;
+      border: 2px solid rgba(201, 52, 32, .35); background: #fff;
+    }
+    textarea:focus { outline: none; border-color: var(--red); box-shadow: 0 0 0 3px rgba(233, 164, 23, .35); }
+    .row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-top: 14px; }
+    .seg { display: inline-flex; border: 2px solid var(--red); border-radius: 999px; overflow: hidden; }
+    .seg button { border: 0; background: transparent; color: var(--red); font: inherit; font-weight: 600; padding: 6px 14px; cursor: pointer; }
+    .seg button[aria-pressed="true"] { background: var(--red); color: var(--cream); }
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+      border: 0; border-radius: 999px; cursor: pointer; text-decoration: none;
+      font: inherit; font-weight: 600; font-size: .92rem; padding: 9px 16px;
+      min-height: 40px;
+    }
+    .btn-gold { background: linear-gradient(135deg, #a86b05, #ffd970 35%, #e9a417 65%, #b77a08); color: #4e0a05; box-shadow: 0 4px 14px rgba(233, 164, 23, .45); }
+    .btn-wa { background: #1fa855; color: #fff; }
+    .btn-line { background: transparent; color: var(--red); box-shadow: inset 0 0 0 2px var(--red); }
+    #list { list-style: none; display: grid; gap: 12px; }
+    #list li {
+      background: #fff; border-radius: 14px; padding: 12px 14px;
+      border: 1.5px solid rgba(233, 164, 23, .6);
+    }
+    #list .nm { font-family: "Yatra One", serif; font-size: 1.25rem; color: var(--red); }
+    #list .url { font-size: .76rem; opacity: .7; word-break: break-all; margin: 2px 0 10px; }
+    #list .acts { display: flex; flex-wrap: wrap; gap: 8px; }
+    .empty { text-align: center; opacity: .7; font-size: .92rem; padding: 6px 0; }
+    .toast {
+      position: fixed; left: 50%; bottom: 24px; transform: translate(-50%, 30px);
+      background: #2a0402; color: var(--cream); padding: 10px 18px; border-radius: 999px;
+      box-shadow: 0 0 0 2px var(--gold); opacity: 0; transition: .3s; pointer-events: none;
+      font-size: .9rem; max-width: calc(100vw - 32px); text-align: center;
+    }
+    .toast.show { opacity: 1; transform: translate(-50%, 0); }
+    h2 { font-family: "Yatra One", serif; font-weight: 400; color: var(--maroon); font-size: 1.3rem; margin-bottom: 12px; }
+    .msg { width: 100%; min-height: 96px; font-size: .92rem; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <p class="om">॥ ॐ नमो भगवते वासुदेवाय ॥</p>
+      <h1>व्यक्तिगत निमंत्रण बनाएँ</h1>
+      <p>हर व्यक्ति के लिए उनके नाम वाला अलग निमंत्रण लिंक बनाएँ और भेजें<br>Make a personal link with each guest's name on the front page</p>
+    </header>
+
+    <section class="card">
+      <label for="names">नाम लिखें · Guest names <span style="font-weight:400">(एक पंक्ति में एक नाम · one per line)</span></label>
+      <textarea id="names" placeholder="श्री रामेश्वर शर्मा जी&#10;वर्मा परिवार&#10;Sunita Ji"></textarea>
+      <small class="help">उदाहरण: “शर्मा परिवार”, “श्री मोहन जी एवं परिवार”। नाम निमंत्रण के मुख्य पृष्ठ पर चमकते सुनहरे अक्षरों में दिखेगा।</small>
+      <div class="row">
+        <span>भाषा · Language:</span>
+        <div class="seg" id="langSeg" role="group" aria-label="Language">
+          <button type="button" data-lang="hi" aria-pressed="true">हिंदी</button>
+          <button type="button" data-lang="en" aria-pressed="false">English</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>WhatsApp संदेश · Message</h2>
+      <textarea id="msg" class="msg"></textarea>
+      <small class="help"><b>{name}</b> की जगह व्यक्ति का नाम और <b>{link}</b> की जगह उनका लिंक अपने-आप आ जाएगा।</small>
+    </section>
+
+    <section class="card">
+      <h2>निमंत्रण लिंक · Links</h2>
+      <ul id="list"></ul>
+      <p class="empty" id="empty">ऊपर नाम लिखें — लिंक यहाँ दिखेंगे 🙏</p>
+    </section>
+  </div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+  (() => {
+    const $ = (id) => document.getElementById(id);
+    const store = {
+      get(k) { try { return localStorage.getItem(k); } catch (_) { return null; } },
+      set(k, v) { try { localStorage.setItem(k, v); } catch (_) {} },
+    };
+    const base = new URL("./", location.href).href; // the invitation lives next to this page
+    const DEFAULT_MSG = {
+      hi: "🙏 जय श्री हरि 🙏\n\nआदरणीय {name},\nएकादशी उद्यापन एवं अखण्ड हरिकीर्तन (19–21 नवंबर 2026, ग्राम मुर्हीं) में आप सपरिवार सादर आमंत्रित हैं।\n\nआपका व्यक्तिगत निमंत्रण 👇\n{link}",
+      en: "🙏 Jai Shri Hari 🙏\n\nDear {name},\nYou and your family are warmly invited to the Ekadashi Udyapan & Akhand Harikirtan (19–21 November 2026, Village Murhi).\n\nYour personal invitation 👇\n{link}",
+    };
+    let lang = store.get("mk-lang") === "en" ? "en" : "hi";
+    $("names").value = store.get("mk-names") || "";
+    $("msg").value = store.get("mk-msg-" + lang) || DEFAULT_MSG[lang];
+
+    const clean = (n) => n.replace(/\s+/g, " ").trim().slice(0, 60);
+    const linkFor = (name) => {
+      const u = new URL(base);
+      u.searchParams.set("guest", name);
+      if (lang === "en") u.searchParams.set("lang", "en");
+      return u.href;
+    };
+    const message = (name) => $("msg").value.split("{name}").join(name).split("{link}").join(linkFor(name));
+
+    let toastT;
+    function toast(t) {
+      $("toast").textContent = t; $("toast").classList.add("show");
+      clearTimeout(toastT); toastT = setTimeout(() => $("toast").classList.remove("show"), 2200);
+    }
+    async function copy(text) {
+      try { await navigator.clipboard.writeText(text); }
+      catch (_) {
+        const ta = document.createElement("textarea"); ta.value = text; document.body.appendChild(ta);
+        ta.select(); document.execCommand("copy"); ta.remove();
+      }
+      toast("कॉपी हो गया ✓ Copied");
+    }
+    function btn(cls, label, onClick, href) {
+      const el = document.createElement(href ? "a" : "button");
+      el.className = "btn " + cls; el.textContent = label;
+      if (href) { el.href = href; el.target = "_blank"; el.rel = "noopener"; }
+      else { el.type = "button"; el.addEventListener("click", onClick); }
+      return el;
+    }
+
+    function render() {
+      const names = [...new Set($("names").value.split(/\n|,/).map(clean).filter(Boolean))];
+      const list = $("list"); list.textContent = "";
+      $("empty").hidden = names.length > 0;
+      names.forEach((name) => {
+        const li = document.createElement("li");
+        const nm = document.createElement("div"); nm.className = "nm"; nm.textContent = name;
+        const url = document.createElement("div"); url.className = "url"; url.textContent = linkFor(name);
+        const acts = document.createElement("div"); acts.className = "acts";
+        acts.append(
+          btn("btn-wa", "💬 WhatsApp", null, "https://wa.me/?text=" + encodeURIComponent(message(name))),
+          btn("btn-gold", "📋 संदेश कॉपी", () => copy(message(name))),
+          btn("btn-line", "🔗 लिंक कॉपी", () => copy(linkFor(name))),
+          btn("btn-line", "👁️ देखें", null, linkFor(name)),
+        );
+        li.append(nm, url, acts);
+        list.appendChild(li);
+      });
+    }
+
+    function setLang(l) {
+      lang = l; store.set("mk-lang", l);
+      document.querySelectorAll("#langSeg button").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.lang === l)));
+      $("msg").value = store.get("mk-msg-" + l) || DEFAULT_MSG[l];
+      render();
+    }
+    document.querySelectorAll("#langSeg button").forEach((b) => b.addEventListener("click", () => setLang(b.dataset.lang)));
+    $("names").addEventListener("input", () => { store.set("mk-names", $("names").value); render(); });
+    $("msg").addEventListener("input", () => { store.set("mk-msg-" + lang, $("msg").value); render(); });
+    setLang(lang);
+  })();
+  </script>
+</body>
+</html>

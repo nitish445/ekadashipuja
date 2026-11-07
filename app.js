@@ -30,18 +30,66 @@
     el.innerHTML = T(hi, en);
   }
 
-  // ----- Optional guest name: ?guest=Sharma%20Parivar -----
-  const guest = (new URLSearchParams(location.search).get("guest") || "").trim();
+  // ----- Personal invitation: ?guest=Sharma%20Parivar (also ?to= / ?name=) -----
+  const qs = new URLSearchParams(location.search);
+  const guest = (qs.get("guest") || qs.get("to") || qs.get("name") || "").replace(/\s+/g, " ").trim().slice(0, 60);
+
+  // split into letters without breaking Devanagari conjuncts / matras
+  function graphemes(str) {
+    if (window.Intl && Intl.Segmenter) return [...new Intl.Segmenter(undefined, { granularity: "grapheme" }).segment(str)].map((x) => x.segment);
+    return str.match(/\S[\u0900-\u0903\u093A-\u094F\u0951-\u0957\u0962\u0963\u200C\u200D]*(?:\u094D\S[\u0900-\u0903\u093A-\u094F\u0951-\u0957]*)*|\s/g) || [str];
+  }
+  function renderGateName() {
+    const box = $("gateName");
+    box.textContent = "";
+    box.setAttribute("aria-label", guest);
+    // keep words together so a long name wraps between words only
+    let i = 0;
+    guest.split(" ").forEach((word, w) => {
+      if (w) box.appendChild(document.createTextNode(" "));
+      const wEl = document.createElement("span");
+      wEl.className = "w";
+      wEl.setAttribute("aria-hidden", "true");
+      graphemes(word).forEach((ch) => {
+        const c = document.createElement("span");
+        c.className = "ch";
+        c.textContent = ch;
+        c.style.setProperty("--i", i++);
+        wEl.appendChild(c);
+      });
+      box.appendChild(wEl);
+    });
+    box.style.setProperty("--n", i);
+    // shrink very long names so they stay on one or two lines
+    // (Latin letters are wider than Devanagari ones)
+    const len = guest.length * (/[a-z]/i.test(guest) ? 1.3 : 1);
+    box.classList.toggle("long", len > 16);
+    box.classList.toggle("xlong", len > 28);
+  }
   function renderGuest() {
     if (!guest) return;
     $("guestLine").textContent = T(`आदरणीय ${guest} — आपकी प्रतीक्षा रहेगी 🙏`, `Dear ${guest} — we look forward to welcoming you 🙏`);
-    const gg = $("gateGuest"); // gone once the landing page has closed
-    if (gg) gg.textContent = T(`आदरणीय ${guest}`, `Dear ${guest}`);
   }
   if (guest) {
+    document.body.classList.add("has-guest");
+    document.title = `${guest} · ${document.title}`;
+    renderGateName();
     renderGuest();
     $("guestLine").hidden = false;
     $("gateGuest").hidden = false;
+    // twinkling stars around the name
+    if (!reduceMotion) {
+      for (let k = 0; k < 14; k++) {
+        const s = document.createElement("span");
+        s.className = "nstar";
+        s.style.left = Math.random() * 100 + "%";
+        s.style.top = Math.random() * 100 + "%";
+        s.style.animationDelay = 1.2 + Math.random() * 3 + "s";
+        s.style.animationDuration = 1.6 + Math.random() * 1.8 + "s";
+        s.style.setProperty("--k", 0.5 + Math.random() * 0.8);
+        $("nameSparks").appendChild(s);
+      }
+    }
   }
 
   // ----- Mandalas (drawn in SVG) -----
