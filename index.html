@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>सादर आमंत्रण · एकादशी उद्यापन एवं अखण्ड हरिकीर्तन</title>
+  <meta name="description" content="एकादशी उद्यापन एवं अखण्ड हरिकीर्तन · 19–21 नवंबर 2026 · ग्राम मुर्हीं। आप सभी सपरिवार सादर आमंत्रित हैं।" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="🪔 सादर आमंत्रण · एकादशी उद्यापन एवं अखण्ड हरिकीर्तन" />
+  <meta property="og:description" content="19–21 नवंबर 2026 · ग्राम मुर्हीं, हमारी जन्मभूमि। आप सभी सपरिवार सादर आमंत्रित हैं।" />
+  <meta property="og:image" content="assets/og.jpg" />
+  <meta name="theme-color" content="#6b0f0a" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🪔</text></svg>" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Kalam:wght@400;700&family=Yatra+One&family=Tiro+Devanagari+Sanskrit&family=Poppins:wght@400;600&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="sparkles" aria-hidden="true"></div>
+  <div id="petals" aria-hidden="true"></div>
+
+  <!-- ===== Temple doors (tap to open — browsers need a tap before music) ===== -->
+  <section id="gate" class="gate">
+    <div class="g-bg" aria-hidden="true">
+      <div class="g-rays"></div>
+      <svg class="mandala g-mandala" data-mandala="big" viewBox="-100 -100 200 200"></svg>
+    </div>
+    <div class="gate-sparks" id="gateSparks" aria-hidden="true"></div>
+    <div class="lanterns" id="lanterns" aria-hidden="true"></div>
+    <div class="toran gate-toran" id="gateToran" aria-hidden="true"></div>
+    <svg class="gate-bell left" viewBox="0 0 60 120" aria-hidden="true"><use href="#bellShape" /></svg>
+    <svg class="gate-bell right" viewBox="0 0 60 120" aria-hidden="true"><use href="#bellShape" /></svg>
+
+    <div class="g-content">
+      <div class="g-medallion">
+        <div class="g-glow" aria-hidden="true"></div>
+        <svg class="mandala g-petals" data-mandala="small" viewBox="-100 -100 200 200" aria-hidden="true"></svg>
+        <div class="g-window"><img src="assets/vishnu.webp" alt="भगवान श्री हरि विष्णु" /></div>
+      </div>
+      <div class="g-text">
+        <p class="g-mantra">॥ श्री गणेशाय नमः ॥</p>
+        <p class="g-chant">॥ ॐ नमो भगवते वासुदेवाय ॥</p>
+        <p class="g-title" data-en="You Are Invited">सादर आमंत्रण</p>
+        <div class="g-divider" aria-hidden="true"><span></span><svg viewBox="0 0 60 30"><path d="M30 2C35 9 35 19 30 28C25 19 25 9 30 2Z M30 28C23 26 17 20 15 12C22 15 28 21 30 28Z M30 28C37 26 43 20 45 12C38 15 32 21 30 28Z M30 28C21 29 12 26 6 20C15 19 24 22 30 28Z M30 28C39 29 48 26 54 20C45 19 36 22 30 28Z" fill="#e9a417"/></svg><span></span></div>
+        <p class="g-sub" data-en="Ekadashi Udyapan &amp;amp; Akhand Harikirtan">एकादशी उद्यापन एवं अखण्ड हरिकीर्तन</p>
+        <p class="g-date" data-en="19 – 21 November 2026 &lt;i&gt;✦&lt;/i&gt; Village Murhi">19 – 21 नवंबर 2026 <i>✦</i> ग्राम मुर्हीं</p>
+        <div class="g-status" aria-hidden="true">
+          <p class="g-status-invite">आप सपरिवार सादर आमंत्रित हैं 🙏</p>
+          <p><b>19</b> वेदी निर्माण एवं अखण्ड हरिकीर्तन</p>
+          <p><b>20</b> वेदी आवाहन पूजन एवं एकादशी महात्मकथा</p>
+          <p><b>21</b> वेदी पूजन, हवन पूर्णाहुति एवं हरिनाम अमृत भोज</p>
+          <p class="g-status-call">📞 +91 95727 74629 <i>✦</i> +91 98010 36864</p>
+        </div>
+        <p class="g-guest" id="gateGuest" hidden></p>
+        <button id="openBtn" class="btn btn-gold pulse" type="button" data-en="🪔 Open Invitation">🪔 निमंत्रण खोलें</button>
+        <p class="hint">Tap to open the invitation 🎵</p>
+      </div>
+    </div>
+
+    <div class="g-ledge" aria-hidden="true">
+      <div class="diya"><i class="flame"></i></div>
+      <div class="diya"><i class="flame"></i></div>
+      <div class="shubh">
+        <span>शुभ</span>
+        <svg viewBox="0 0 100 100"><g fill="none" stroke="#e9332a" stroke-width="9" stroke-linecap="square"><path d="M50 50V14H82M50 50H86V82M50 50V86H18M50 50H14V18" /></g><g fill="#e9332a"><circle cx="68" cy="32" r="6" /><circle cx="68" cy="68" r="6" /><circle cx="32" cy="68" r="6" /><circle cx="32" cy="32" r="6" /></g></svg>
+        <span>लाभ</span>
+      </div>
+      <div class="diya"><i class="flame"></i></div>
+      <div class="diya"><i class="flame"></i></div>
+    </div>
+    <div class="gate-flash" aria-hidden="true"></div>
+  </section>
+
+  <!-- ===== Invitation ===== -->
+  <main id="invite" class="invite">
+    <div class="toran" id="toran" aria-hidden="true"></div>
+    <button class="bell bell-left" type="button" aria-label="घंटी बजाएं" data-en-label="Ring the bell"><svg viewBox="0 0 60 120"><use href="#bellShape" /></svg></button>
+    <button class="bell bell-right" type="button" aria-label="घंटी बजाएं" data-en-label="Ring the bell"><svg viewBox="0 0 60 120"><use href="#bellShape" /></svg></button>
+
+    <section class="hero">
+      <div class="mantra-box reveal">
+        <p class="mantra">॥ श्री गणेशाय नमः ॥</p>
+        <p class="mantra">॥ ॐ नमो भगवते वासुदेवाय नमः ॥</p>
+      </div>
+      <div class="art-wrap reveal">
+        <div class="rays" aria-hidden="true"></div>
+        <svg class="mandala spin-slow" data-mandala="big" viewBox="-100 -100 200 200" aria-hidden="true"></svg>
+        <svg class="mandala mandala-inner spin-rev" data-mandala="small" viewBox="-100 -100 200 200" aria-hidden="true"></svg>
+        <img class="art" id="deity" src="assets/vishnu.webp" alt="भगवान श्री हरि विष्णु" />
+        <div class="offerings" id="offerings" aria-hidden="true"></div>
+        <div class="thali" id="thali" aria-hidden="true">
+          <svg viewBox="0 0 120 120">
+            <defs>
+              <radialGradient id="brass" cx="45%" cy="35%" r="70%">
+                <stop offset="0" stop-color="#fff1b8" />
+                <stop offset=".45" stop-color="#e9a417" />
+                <stop offset="1" stop-color="#8a5503" />
+              </radialGradient>
+              <linearGradient id="clay" x1="0" x2="0" y1="0" y2="1">
+                <stop offset="0" stop-color="#f4a35a" />
+                <stop offset="1" stop-color="#a6420f" />
+              </linearGradient>
+            </defs>
+            <ellipse cx="60" cy="78" rx="56" ry="26" fill="#7a4a02" opacity=".35" />
+            <ellipse cx="60" cy="72" rx="56" ry="26" fill="url(#brass)" stroke="#7a4a02" stroke-width="1.5" />
+            <ellipse cx="60" cy="70" rx="45" ry="19" fill="#f6c95e" stroke="#b77a08" stroke-width="1.2" />
+            <g>
+              <circle cx="22" cy="70" r="6" fill="#ff8c00" /><circle cx="22" cy="70" r="2.2" fill="#b84a00" />
+              <circle cx="98" cy="70" r="6" fill="#ffc21a" /><circle cx="98" cy="70" r="2.2" fill="#c27a00" />
+              <circle cx="40" cy="86" r="5.5" fill="#ffc21a" /><circle cx="40" cy="86" r="2" fill="#c27a00" />
+              <circle cx="80" cy="86" r="5.5" fill="#ff8c00" /><circle cx="80" cy="86" r="2" fill="#b84a00" />
+            </g>
+            <ellipse cx="38" cy="66" rx="9" ry="5" fill="#b77a08" /><ellipse cx="38" cy="65" rx="7" ry="3.4" fill="#d6261a" />
+            <ellipse cx="82" cy="66" rx="9" ry="5" fill="#b77a08" /><ellipse cx="82" cy="65" rx="7" ry="3.4" fill="#fff7e0" />
+            <path d="M42 60 Q60 80 78 60 Q60 66 42 60 Z" fill="url(#clay)" stroke="#7a2e08" stroke-width="1" />
+            <ellipse cx="60" cy="60.5" rx="18" ry="3.6" fill="#c75a18" />
+            <path d="M74 58 q8 -3 10 -1 q-4 3 -10 3 z" fill="url(#clay)" />
+          </svg>
+          <i class="flame thali-flame"></i>
+        </div>
+      </div>
+
+      <div class="puja-actions reveal">
+        <button id="aartiBtn" class="btn btn-gold puja-btn" type="button" data-en="🪔 Perform Aarti">🪔 आरती करें</button>
+        <button id="pushpBtn" class="btn btn-gold puja-btn" type="button" data-en="🌸 Offer Flowers">🌸 पुष्पांजलि</button>
+        <button id="lyricsBtn" class="btn btn-outline puja-btn" type="button" aria-expanded="false" aria-controls="aartiLyrics" data-en="📜 Aarti Lyrics">📜 आरती के बोल</button>
+      </div>
+      <div class="lyrics" id="aartiLyrics" hidden>
+        <p class="lyrics-title" data-en="🪔 Aarti — Om Jai Jagdish Hare 🪔">🪔 आरती — ॐ जय जगदीश हरे 🪔</p>
+        <p class="lyrics-tip" data-en="While the lyrics are open, the aarti keeps going until you stop it — sing along! 🙏">बोल खुले रहने तक आरती चलती रहेगी — साथ में गाएँ! 🙏</p>
+        <p class="verse first" data-en="Om Jai Jagdish Hare, Swami Jai Jagdish Hare.&lt;br&gt;Bhakt janon ke sankat, daas janon ke sankat,&lt;br&gt;kshan mein door kare.">ॐ जय जगदीश हरे, स्वामी जय जगदीश हरे।<br>भक्त जनों के संकट, दास जनों के संकट,<br>क्षण में दूर करे॥</p>
+        <p class="verse" data-en="Jo dhyaave phal paave, dukh binse man ka,&lt;br&gt;Swami dukh binse man ka.&lt;br&gt;Sukh sampati ghar aave, kasht mite tan ka.">जो ध्यावे फल पावे, दुःख बिनसे मन का,<br>स्वामी दुःख बिनसे मन का।<br>सुख सम्पति घर आवे, कष्ट मिटे तन का॥</p>
+        <p class="refrain" data-en="॥ Om Jai Jagdish Hare ॥">॥ ॐ जय जगदीश हरे ॥</p>
+        <p class="verse" data-en="Maat pita tum mere, sharan gahoon main kiski,&lt;br&gt;Swami sharan gahoon main kiski.&lt;br&gt;Tum bin aur na dooja, aas karoon main jiski.">मात पिता तुम मेरे, शरण गहूँ मैं किसकी,<br>स्वामी शरण गहूँ मैं किसकी।<br>तुम बिन और न दूजा, आस करूँ मैं जिसकी॥</p>
+        <p class="refrain" data-en="॥ Om Jai Jagdish Hare ॥">॥ ॐ जय जगदीश हरे ॥</p>
+        <p class="verse" data-en="Tum pooran Paramatma, tum Antaryami,&lt;br&gt;Swami tum Antaryami.&lt;br&gt;Paarbrahm Parmeshwar, tum sab ke Swami.">तुम पूरण परमात्मा, तुम अन्तर्यामी,<br>स्वामी तुम अन्तर्यामी।<br>पारब्रह्म परमेश्वर, तुम सब के स्वामी॥</p>
+        <p class="refrain" data-en="॥ Om Jai Jagdish Hare ॥">॥ ॐ जय जगदीश हरे ॥</p>
+        <p class="verse" data-en="Tum karuna ke saagar, tum paalankarta,&lt;br&gt;Swami tum paalankarta.&lt;br&gt;Main moorakh phalkaami, main sevak tum Swami,&lt;br&gt;kripa karo Bharta.">तुम करुणा के सागर, तुम पालनकर्ता,<br>स्वामी तुम पालनकर्ता।<br>मैं मूरख फलकामी, मैं सेवक तुम स्वामी,<br>कृपा करो भर्ता॥</p>
+        <p class="refrain" data-en="॥ Om Jai Jagdish Hare ॥">॥ ॐ जय जगदीश हरे ॥</p>
+        <p class="verse" data-en="Tum ho ek agochar, sabke praanpati,&lt;br&gt;Swami sabke praanpati.&lt;br&gt;Kis vidhi miloon dayamay, tumko main kumati.">तुम हो एक अगोचर, सबके प्राणपति,<br>स्वामी सबके प्राणपति।<br>किस विधि मिलूँ दयामय, तुमको मैं कुमति॥</p>
+        <p class="refrain" data-en="॥ Om Jai Jagdish Hare ॥">॥ ॐ जय जगदीश हरे ॥</p>
+        <p class="verse" data-en="Deenbandhu dukhharta, Thakur tum mere,&lt;br&gt;Swami rakshak tum mere.&lt;br&gt;Apne haath uthao, apni sharan lagao,&lt;br&gt;dwaar pada tere.">दीनबन्धु दुखहर्ता, ठाकुर तुम मेरे,<br>स्वामी रक्षक तुम मेरे।<br>अपने हाथ उठाओ, अपनी शरण लगाओ,<br>द्वार पड़ा तेरे॥</p>
+        <p class="refrain" data-en="॥ Om Jai Jagdish Hare ॥">॥ ॐ जय जगदीश हरे ॥</p>
+        <p class="verse" data-en="Vishay-vikaar mitao, paap haro Deva,&lt;br&gt;Swami paap haro Deva.&lt;br&gt;Shraddha bhakti badhao, santan ki seva.">विषय-विकार मिटाओ, पाप हरो देवा,<br>स्वामी पाप हरो देवा।<br>श्रद्धा भक्ति बढ़ाओ, सन्तन की सेवा॥</p>
+        <p class="refrain" data-en="॥ Om Jai Jagdish Hare ॥">॥ ॐ जय जगदीश हरे ॥</p>
+        <p class="verse" data-en="Tan man dhan sab hai tera, Swami sab kuchh hai tera.&lt;br&gt;Tera tujhko arpan, kya laage mera.">तन मन धन सब है तेरा, स्वामी सब कुछ है तेरा।<br>तेरा तुझको अर्पण, क्या लागे मेरा॥</p>
+        <p class="refrain" data-en="॥ Om Jai Jagdish Hare ॥">॥ ॐ जय जगदीश हरे ॥</p>
+        <p class="lyrics-end" data-en="॥ Bolo Shri Hari Vishnu Bhagwan ki Jai ॥">॥ बोलो श्री हरि विष्णु भगवान की जय ॥</p>
+      </div>
+      <p class="puja-hint reveal" data-en="Tap Lord Vishnu&#x27;s picture to offer flowers">पुष्प अर्पित करने के लिए भगवान के चित्र को स्पर्श करें</p>
+    </section>
+
+    <section class="card reveal center">
+      <span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span>
+      <p class="sadar" data-en="&lt;span class=&quot;diya-ico&quot;&gt;🪔&lt;/span&gt; A Warm Invitation &lt;span class=&quot;diya-ico&quot;&gt;🪔&lt;/span&gt;"><span class="diya-ico">🪔</span> सादर आमंत्रण <span class="diya-ico">🪔</span></p>
+      <h1 class="title" data-en="&lt;span class=&quot;shimmer&quot;&gt;Ekadashi Udyapan&lt;/span&gt;&lt;small&gt;&amp;amp;&lt;/small&gt;&lt;span class=&quot;shimmer&quot;&gt;Akhand Harikirtan&lt;/span&gt;"><span class="shimmer">एकादशी उद्यापन</span><small>एवं</small><span class="shimmer">अखण्ड हरिकीर्तन</span></h1>
+      <div class="divider"><span>❀</span></div>
+      <p class="body" data-en="By the boundless grace of the Supreme Lord and Bhagwan Shri Hari Vishnu, you and your family are &lt;b&gt;warmly invited&lt;/b&gt; to this sacred religious ceremony.">
+        परमपिता परमेश्वर एवं भगवान श्री हरि विष्णु की असीम कृपा से आयोजित
+        पावन धार्मिक अनुष्ठान में आप सभी <b>सपरिवार सादर आमंत्रित</b> हैं।
+      </p>
+      <p class="body" data-en="Please join the religious programmes on this holy occasion, share in the punya (spiritual merit) and receive the blessings of Bhagwan Shri Hari Vishnu.">
+        इस पावन अवसर पर आयोजित विभिन्न धार्मिक कार्यक्रमों में सम्मिलित होकर
+        पुण्य के भागी बनें तथा भगवान श्री हरि विष्णु का आशीर्वाद प्राप्त करें।
+      </p>
+      <p class="guest" id="guestLine" hidden></p>
+    </section>
+
+    <section class="card reveal center mahatmya">
+      <span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span>
+      <h2 data-en="Significance of Ekadashi">एकादशी महात्म्य</h2>
+      <p class="shloka">हरेर्नाम हरेर्नाम हरेर्नामैव केवलम्।<br>कलौ नास्त्येव नास्त्येव नास्त्येव गतिरन्यथा॥</p>
+      <p class="shloka-mean" data-en="“In Kaliyuga, the name of Hari alone is the path to liberation.” — Brihannaradiya Purana">“कलियुग में केवल हरि का नाम ही कल्याण का मार्ग है।” — बृहन्नारदीय पुराण</p>
+      <div class="mh-grid">
+        <div class="mh">
+          <span class="mh-ico">🌙</span>
+          <b data-en="What is Ekadashi?">एकादशी क्या है?</b>
+          <p data-en="In the Hindu calendar, the eleventh day of each lunar fortnight is called Ekadashi. It is considered especially dear to Bhagwan Shri Hari Vishnu.">हिंदू पंचांग में हर महीने के दोनों पक्षों की ग्यारहवीं तिथि को एकादशी कहते हैं। यह तिथि भगवान श्री हरि विष्णु को अत्यंत प्रिय मानी जाती है।</p>
+        </div>
+        <div class="mh">
+          <span class="mh-ico">🙏</span>
+          <b data-en="Fasting &amp;amp; Harinaam">व्रत एवं हरिनाम</b>
+          <p data-en="Fasting, bhajan-kirtan and remembering the Lord&#x27;s name hold special importance on this day. It is believed that an Ekadashi fast kept with devotion purifies the mind and brings peace and happiness to the home.">इस दिन व्रत, भजन-कीर्तन और हरिनाम स्मरण का विशेष महत्व है। मान्यता है कि श्रद्धा से किया गया एकादशी व्रत मन को निर्मल करता है और घर में सुख-शांति लाता है।</p>
+        </div>
+        <div class="mh">
+          <span class="mh-ico">🎶</span>
+          <b data-en="Akhand Harikirtan">अखण्ड हरिकीर्तन</b>
+          <p data-en="In Akhand Harikirtan, the Lord’s name is sung continuously without a break. The scriptures say that in Kaliyuga, singing the Lord’s name together is the simplest and highest spiritual practice, and it makes the home, the family and the whole atmosphere sacred.">अखण्ड हरिकीर्तन में बिना रुके भगवान के नाम का निरंतर गायन होता है। शास्त्रों के अनुसार कलियुग में हरिनाम संकीर्तन ही सबसे सरल और श्रेष्ठ साधना है, जिससे घर-परिवार और पूरा वातावरण पावन हो जाता है।</p>
+        </div>
+        <div class="mh">
+          <span class="mh-ico">🪔</span>
+          <b data-en="Ekadashi Udyapan">एकादशी उद्यापन</b>
+          <p data-en="Udyapan is the ritual that formally completes a vrat (vow). An Ekadashi vrat kept with devotion over many years is concluded with puja, havan and purnahuti, so that the full blessing of the vrat is received.">किसी व्रत को विधिपूर्वक पूर्ण करने के अनुष्ठान को उद्यापन कहते हैं। वर्षों तक श्रद्धा से रखे गए एकादशी व्रत का उद्यापन पूजन, हवन और पूर्णाहुति के साथ किया जाता है, जिससे व्रत का पूर्ण फल प्राप्त होता है।</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="card reveal center mala-card">
+      <span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span>
+      <h2 data-en="Jap Mala">जप माला</h2>
+      <p class="body" data-en="Tap the mala to chant. Each tap is one jap — <span class=&quot;num&quot;>108</span> jap complete one mala.">माला को स्पर्श करें और जप करें। हर स्पर्श एक जप है — <span class="num">108</span> जप से एक माला पूर्ण होती है।</p>
+      <button class="mala" id="mala" type="button" aria-label="जप करें" data-en-label="Chant">
+        <svg viewBox="-112 -112 224 224" aria-hidden="true">
+          <defs>
+            <radialGradient id="beadGold" cx="35%" cy="30%" r="75%">
+              <stop offset="0" stop-color="#fff6cf" /><stop offset=".45" stop-color="#f0b429" /><stop offset="1" stop-color="#8a5503" />
+            </radialGradient>
+            <radialGradient id="beadDone" cx="35%" cy="30%" r="75%">
+              <stop offset="0" stop-color="#ffb199" /><stop offset=".5" stop-color="#c93420" /><stop offset="1" stop-color="#5a0b05" />
+            </radialGradient>
+          </defs>
+          <circle r="92" fill="none" stroke="#b77a08" stroke-width="1" opacity=".6" />
+          <g id="malaRing"></g>
+          <path d="M0 -101 L-6 -110 L6 -110 Z" fill="#c93420" stroke="#fff1b8" stroke-width="1" />
+          <g class="sumeru">
+            <path d="M-3 98 L-7 112 M0 98 L0 113 M3 98 L7 112" stroke="#c93420" stroke-width="2.4" stroke-linecap="round" />
+            <circle cy="96" r="8" fill="url(#beadGold)" stroke="#7a4a02" stroke-width="1" />
+          </g>
+        </svg>
+        <span class="mala-center">
+          <span class="mala-om">ॐ</span>
+          <b id="malaCount">0</b>
+          <small>/ 108</small>
+        </span>
+      </button>
+      <p class="mala-mantra" id="malaMantra" data-en="Om Namo Bhagavate Vasudevaya">ॐ नमो भगवते वासुदेवाय</p>
+      <p class="mala-stats">
+        <span data-en="Malas completed">पूर्ण माला</span>: <b id="malaRounds">0</b>
+        <i>✦</i>
+        <span data-en="Total jap">कुल जप</span>: <b id="malaTotal">0</b>
+      </p>
+      <button class="btn btn-outline mala-reset" id="malaReset" type="button" data-en="↺ Start again">↺ फिर से आरंभ करें</button>
+    </section>
+
+    <section class="card reveal center diya-card">
+      <span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span>
+      <h2 data-en="Light a Diya">दीप जलाएँ</h2>
+      <p class="body" data-en="Light a diya for the success of the ceremony and the well-being of your family. <span class=&quot;num&quot;>11</span> diyas make a complete deepmala.">अनुष्ठान की सफलता और अपने परिवार के मंगल के लिए एक दीप प्रज्वलित करें। <span class="num">11</span> दीपों से दीपमाला पूर्ण होती है।</p>
+      <div class="deepmala" id="deepmala">
+        <div class="dp-row"><button class="dp" type="button" tabindex="-1" aria-hidden="true"><span class="diya"><i class="flame"></i></span></button><button class="dp" type="button" tabindex="-1" aria-hidden="true"><span class="diya"><i class="flame"></i></span></button><button class="dp" type="button" tabindex="-1" aria-hidden="true"><span class="diya"><i class="flame"></i></span></button><button class="dp" type="button" tabindex="-1" aria-hidden="true"><span class="diya"><i class="flame"></i></span></button><button class="dp" type="button" tabindex="-1" aria-hidden="true"><span class="diya"><i class="flame"></i></span></button></div>
+        <div class="dp-row"><button class="dp" type="button" tabindex="-1" aria-hidden="true"><span class="diya"><i class="flame"></i></span></button><button class="dp" type="button" tabindex="-1" aria-hidden="true"><span class="diya"><i class="flame"></i></span></button><button class="dp" type="button" tabindex="-1" aria-hidden="true"><span class="diya"><i class="flame"></i></span></button><button class="dp" type="button" tabindex="-1" aria-hidden="true"><span class="diya"><i class="flame"></i></span></button><button class="dp" type="button" tabindex="-1" aria-hidden="true"><span class="diya"><i class="flame"></i></span></button><button class="dp" type="button" tabindex="-1" aria-hidden="true"><span class="diya"><i class="flame"></i></span></button></div>
+        <div class="dp-stand" aria-hidden="true"></div>
+      </div>
+      <p class="dp-count"><span data-en="Diyas lit">प्रज्वलित दीप</span>: <b id="dpCount">0</b> <span class="num">/ 11</span></p>
+      <button class="btn btn-gold" id="diyaBtn" type="button" data-en="🪔 Light a Diya">🪔 दीप जलाएँ</button>
+      <p class="dp-total"><span data-en="Total diyas you have lit">आपके द्वारा जलाए गए कुल दीप</span>: <b id="dpTotal">0</b></p>
+    </section>
+
+    <section class="card card-dark reveal center">
+      <span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span>
+      <h2 data-en="Countdown to the Auspicious Day">शुभ घड़ी में शेष</h2>
+      <div class="countdown" id="countdown">
+        <div><span id="cdD">0</span><small data-en="Days">दिन</small></div>
+        <div><span id="cdH">00</span><small data-en="Hours">घंटे</small></div>
+        <div><span id="cdM">00</span><small data-en="Mins">मिनट</small></div>
+        <div><span id="cdS">00</span><small data-en="Secs">सेकंड</small></div>
+      </div>
+      <p class="cd-done" id="cdDone" hidden data-en="🙏 The sacred ceremony has begun — Jai Shri Hari!">🙏 पावन अनुष्ठान आरंभ हो चुका है — जय श्री हरि!</p>
+      <p class="cd-sub" data-en="19 – 21 November 2026">19 – 21 नवंबर 2026</p>
+    </section>
+
+    <section class="card reveal">
+      <span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span>
+      <h2 data-en="Programme">कार्यक्रम विवरण</h2>
+      <ol class="timeline">
+        <li class="reveal">
+          <div class="date"><b>19</b><small data-en="Nov">नवंबर</small></div>
+          <div class="event">
+            <p class="day" data-en="Day 1 · Thursday">प्रथम दिवस · गुरुवार</p>
+            <p class="what" data-en="Vedi Nirman (preparing the sacred altar) &amp;amp; Akhand Harikirtan">वेदी निर्माण एवं अखण्ड हरिकीर्तन</p>
+          </div>
+        </li>
+        <li class="reveal">
+          <div class="date"><b>20</b><small data-en="Nov">नवंबर</small></div>
+          <div class="event">
+            <p class="day" data-en="Day 2 · Friday">द्वितीय दिवस · शुक्रवार</p>
+            <p class="what" data-en="Vedi Avahan Pujan &amp;amp; Ekadashi Mahatma Katha">वेदी आवाहन पूजन एवं एकादशी महात्मकथा</p>
+          </div>
+        </li>
+        <li class="reveal">
+          <div class="date"><b>21</b><small data-en="Nov">नवंबर</small></div>
+          <div class="event">
+            <p class="day" data-en="Day 3 · Saturday">तृतीय दिवस · शनिवार</p>
+            <p class="what" data-en="Vedi Pujan, Havan Purnahuti &amp;amp; Harinam Amrit Bhoj &lt;span class=&quot;time&quot;&gt;(from 1 PM)&lt;/span&gt;">वेदी पूजन, हवन पूर्णाहुति एवं हरिनाम अमृत भोज <span class="time">(1 बजे से)</span></p>
+          </div>
+        </li>
+      </ol>
+      <div class="actions">
+        <a id="calBtn" class="btn btn-outline" target="_blank" rel="noopener" data-en="📆 Add to Calendar">📆 कैलेंडर में जोड़ें</a>
+      </div>
+    </section>
+
+    <section class="card reveal center">
+      <span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span>
+      <h2 data-en="Venue">कार्यक्रम स्थल</h2>
+      <div class="venue-badge">🛕</div>
+      <p class="venue" data-en="Village Murhi">ग्राम मुर्हीं</p>
+      <p class="venue-sub" data-en="Our Homeland">हमारी जन्मभूमि</p>
+
+      <h2 class="mt" data-en="Contact">संपर्क</h2>
+      <p class="phone"><a href="tel:+919572774629">📞 +91 95727 74629</a><a href="tel:+919801036864">📞 +91 98010 36864</a></p>
+      <p class="phone-hint" data-en="Tap a number to call">कॉल करने के लिए नंबर पर स्पर्श करें</p>
+      <div class="actions">
+        <a class="btn btn-red" id="waBtn" target="_blank" rel="noopener" data-en="💬 Reply on WhatsApp">💬 WhatsApp पर उत्तर दें</a>
+                <button class="btn btn-outline" id="shareBtn" type="button" data-en="🔗 Share">🔗 शेयर करें</button>
+      </div>
+    </section>
+
+    <section class="card reveal center family">
+      <span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span>
+      <h2 data-en="The Inviting Family">निवेदक परिवार</h2>
+      <p class="fam-intro" data-en="Awaiting your gracious arrival">आपके शुभागमन की प्रतीक्षा में</p>
+
+      <div class="fam-group elders">
+        <p class="fam-title" data-en="With Blessings">आशीर्वाद</p>
+          <p class="fam-couple"><span data-en="Shri Kishun Singh">श्री किशुन सिंह</span><i>❀</i><span data-en="Smt. Pavitra Devi">श्रीमती पवित्रा देवी</span></p>
+      </div>
+
+      <div class="fam-group">
+        <p class="fam-title" data-en="Hosts">निवेदक</p>
+          <p class="fam-couple"><span data-en="Shri Ashok Singh">श्री अशोक सिंह</span><i>❀</i><span data-en="Smt. Meena Devi">श्रीमती मीना देवी</span></p>
+          <p class="fam-couple"><span data-en="Shri Asharfi Singh">श्री अशर्फी सिंह</span><i>❀</i><span data-en="Smt. Kiran Devi">श्रीमती किरण देवी</span></p>
+          <p class="fam-couple"><span data-en="Shri Anil Singh">श्री अनिल सिंह</span><i>❀</i><span data-en="Smt. Savita Devi">श्रीमती सविता देवी</span></p>
+          <p class="fam-couple"><span data-en="Shri Ajit Singh">श्री अजीत सिंह</span><i>❀</i><span data-en="Smt. Seema Devi">श्रीमती सीमा देवी</span></p>
+      </div>
+
+      <div class="fam-group">
+        <p class="fam-title" data-en="Humbly Inviting">विनीत</p>
+          <p class="fam-couple"><span data-en="Shri Ravi Kumar">श्री रवि कुमार</span><i>❀</i><span data-en="Smt. Laxmi Devi">श्रीमती लक्ष्मी देवी</span></p>
+          <p class="fam-couple"><span data-en="Shri Rahul Singh">श्री राहुल सिंह</span><i>❀</i><span data-en="Smt. Sonam Devi">श्रीमती सोनम देवी</span></p>
+          <p class="fam-couple"><span data-en="Shri Deepak Kumar">श्री दीपक कुमार</span><i>❀</i><span data-en="Smt. Raj Nandini Devi">श्रीमती राजनंदिनी देवी</span></p>
+          <p class="fam-couple"><span data-en="Shri Abhishek Kumar">श्री अभिषेक कुमार</span><i>❀</i><span data-en="Smt. Nandani Devi">श्रीमती नंदनी देवी</span></p>
+      </div>
+
+      <div class="fam-group">
+        <p class="fam-title" data-en="Eager to Welcome You">दर्शनाभिलाषी</p>
+        <p class="fam-names"><span data-en="Vikash Singh">विकास सिंह</span><span data-en="Shailesh Kumar">शैलेश कुमार</span><span data-en="Nitish Kumar">नीतीश कुमार</span><span data-en="Karan Kumar">करण कुमार</span><span data-en="Khushi Kumari">खुशी कुमारी</span></p>
+      </div>
+
+      <div class="fam-group kids">
+        <p class="fam-title" data-en="A Request from the Little Ones">बाल मनुहार</p>
+        <p class="manuhar" data-en="“Please, please do come to the holy Harikirtan at our home!” 🙏">“हमारे घर के पावन हरिकीर्तन में आप ज़रूर-ज़रूर आना!” 🙏</p>
+        <p class="fam-chips"><span data-en="Shivansh">शिवांश</span><span data-en="Shiwangi">शिवांगी</span><span data-en="Advik">अद्विक</span><span data-en="Kavya">काव्या</span><span data-en="Shanvi">शान्वी</span><span data-en="Shreeja">श्रीजा</span></p>
+      </div>
+    </section>
+
+    <section class="card reveal center downloads">
+      <span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span>
+      <h2 data-en="Download the Invitation">निमंत्रण डाउनलोड करें</h2>
+      <p class="body" data-en="Save the invitation and share it with your family and friends.">निमंत्रण पत्र को सहेजें और अपने परिवार व मित्रों के साथ साझा करें।</p>
+      <div class="dl-grid">
+        <a class="dl" href="assets/invitation.pdf" download="Ekadashi-Udyapan-Harikirtan-Nimantran.pdf">
+          <span class="dl-ico">📄</span><b>PDF</b><small data-en="Invitation card">निमंत्रण पत्र</small>
+        </a>
+        <a class="dl" href="assets/invitation.mp4" download="Ekadashi-Udyapan-Harikirtan-Nimantran.mp4">
+          <span class="dl-ico">🎬</span><b data-en="Video">वीडियो</b><small data-en="With music">संगीत सहित</small>
+        </a>
+        <a class="dl" href="assets/whatsapp-status.jpg" download="Ekadashi-Udyapan-Harikirtan-Status.jpg">
+          <span class="dl-ico">🖼️</span><b data-en="Status">स्टेटस</b><small data-en="WhatsApp photo">WhatsApp फ़ोटो</small>
+        </a>
+      </div>
+    </section>
+
+    <footer class="footer reveal">
+      <div class="diyas" aria-hidden="true">
+        <div class="diya"><i class="flame"></i></div>
+        <div class="diya"><i class="flame"></i></div>
+        <div class="diya"><i class="flame"></i></div>
+        <div class="diya"><i class="flame"></i></div>
+        <div class="diya"><i class="flame"></i></div>
+      </div>
+      <p class="jai shimmer" data-en="॥ Jai Shri Hari ॥">॥ जय श्री हरि ॥</p>
+      <p class="muted" data-en="Your presence is our good fortune">आपकी उपस्थिति ही हमारा सौभाग्य है</p>
+      <p class="credit">
+        <span>Designed &amp; created by <b>Nitish Kumar</b> || Software Engineer</span>
+      </p>
+    </footer>
+  </main>
+
+  <div class="lang-switch" id="langSwitch" role="group" aria-label="भाषा / Language">
+    <button type="button" data-lang="hi" aria-pressed="true">हिंदी</button>
+    <button type="button" data-lang="en" aria-pressed="false">English</button>
+  </div>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <button id="musicBtn" class="music" type="button" aria-label="संगीत चालू / बंद करें" data-en-label="Music on / off" hidden>
+    <span class="bars"><i></i><i></i><i></i><i></i></span>
+  </button>
+
+  <!-- Temple bell drawing (reused) -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+      <linearGradient id="goldGrad" x1="0" x2="1">
+        <stop offset="0" stop-color="#a86b05" />
+        <stop offset=".35" stop-color="#ffd970" />
+        <stop offset=".6" stop-color="#e9a417" />
+        <stop offset="1" stop-color="#8a5503" />
+      </linearGradient>
+      <g id="bellShape">
+        <line x1="30" y1="0" x2="30" y2="40" stroke="#8e1f14" stroke-width="2.5" />
+        <circle cx="30" cy="20" r="3.5" fill="#ff7a1a" /><circle cx="30" cy="30" r="3.5" fill="#ffc21a" />
+        <circle cx="30" cy="42" r="5" fill="none" stroke="url(#goldGrad)" stroke-width="3" />
+        <path d="M30 46 C18 46 15 58 14 72 C13 84 8 90 4 94 L56 94 C52 90 47 84 46 72 C45 58 42 46 30 46 Z" fill="url(#goldGrad)" stroke="#7a4a02" stroke-width="1.2" />
+        <path d="M10 88 L50 88" stroke="#7a4a02" stroke-width="1.5" opacity=".6" />
+        <path d="M17 66 Q30 70 43 66" stroke="#fff3c4" stroke-width="1.5" fill="none" opacity=".7" />
+        <circle cx="30" cy="100" r="6" fill="url(#goldGrad)" stroke="#7a4a02" stroke-width="1" />
+      </g>
+    </defs>
+  </svg>
+
+  <audio id="song" src="assets/song.mp3" preload="auto" loop></audio>
+  <script src="app.js"></script>
+</body>
+</html>
