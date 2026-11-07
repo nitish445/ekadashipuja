@@ -1305,3 +1305,160 @@ body.en .in-name { font-family: "Playfair Display", "Yatra One", serif; font-wei
   .in-glow { transform: translate(-50%, -50%); }
   .in-line { animation: none; transform: none; }
 }
+
+/* ===== Sealed letter ===== */
+.letter-sec { margin: 30px 0 10px; text-align: center; }
+.lt-hint {
+  margin-bottom: 14px;
+  font-family: "Kalam", cursive; font-weight: 700; font-size: 1.05rem;
+  color: var(--maroon);
+  animation: inBlink 2.2s ease-in-out infinite;
+}
+.envelope {
+  position: relative;
+  width: min(100%, 400px); aspect-ratio: 1.55;
+  margin: 0 auto;
+  perspective: 1000px;
+  cursor: pointer;
+  filter: drop-shadow(0 16px 22px rgba(110, 26, 16, .35));
+  animation: envFloat 4s ease-in-out infinite;
+  -webkit-tap-highlight-color: transparent;
+}
+.envelope:focus-visible { outline: 3px solid var(--gold); outline-offset: 6px; border-radius: 10px; }
+.env-back { position: absolute; inset: 0; border-radius: 10px; background: #8e2214; }
+.env-peek {
+  position: absolute; left: 7%; right: 7%; top: 7%; height: 80%;
+  border-radius: 6px;
+  background: repeating-linear-gradient(180deg, transparent 0 26px, rgba(201, 52, 32, .12) 26px 27px), linear-gradient(180deg, #fffdf6, #fff1d6);
+  box-shadow: 0 0 0 2px rgba(233, 164, 23, .6) inset;
+  display: flex; justify-content: center; padding-top: 12px;
+  font-family: "Yatra One", serif; color: var(--red); font-size: 1.1rem;
+  transition: transform 1s cubic-bezier(.3, .8, .3, 1) .55s;
+}
+.env-front {
+  position: absolute; inset: 0; z-index: 3;
+  border-radius: 10px;
+  background:
+    radial-gradient(circle at 20% 80%, rgba(255, 217, 112, .18) 0 2px, transparent 3px) 0 0 / 22px 22px,
+    linear-gradient(160deg, #d9452c, #a82917 70%, #8e2214);
+  clip-path: polygon(0 0, 50% 56%, 100% 0, 100% 100%, 0 100%);
+}
+.env-front::before { /* gold edges of the side flaps */
+  content: ""; position: absolute; inset: 0;
+  background:
+    linear-gradient(to top right, transparent calc(50% - 1px), rgba(255, 217, 112, .8) 50%, transparent calc(50% + 1px)) left bottom / 50% 100% no-repeat,
+    linear-gradient(to top left, transparent calc(50% - 1px), rgba(255, 217, 112, .8) 50%, transparent calc(50% + 1px)) right bottom / 50% 100% no-repeat;
+  opacity: .6;
+}
+.env-to {
+  position: absolute; left: 0; right: 0; bottom: 9%;
+  display: flex; flex-direction: column; align-items: center;
+  font-family: "Kalam", cursive; color: var(--cream);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, .5);
+  padding: 0 12%;
+}
+.env-to small { font-size: .85rem; opacity: .85; }
+.env-to b {
+  font-size: clamp(1.15rem, 5vw, 1.45rem); line-height: 1.25;
+  background: linear-gradient(100deg, #ffd970, #fff6d2 45%, #e9a417);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, .5));
+}
+.env-flap {
+  position: absolute; left: 0; right: 0; top: 0; height: 60%; z-index: 4;
+  background: linear-gradient(180deg, #b52f1b, #cf4129);
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
+  border-radius: 10px 10px 0 0;
+  transform-origin: top center;
+  transition: transform .8s cubic-bezier(.5, 0, .3, 1), z-index 0s .4s;
+}
+.env-seal {
+  position: absolute; left: 50%; top: 58%; z-index: 5;
+  width: 66px; height: 66px; margin: -33px 0 0 -33px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  background: radial-gradient(circle at 35% 30%, #ffe9a8, #e9a417 45%, #a86b05 100%);
+  box-shadow: 0 0 0 4px rgba(255, 217, 112, .35), 0 4px 10px rgba(0, 0, 0, .45), inset 0 -3px 6px rgba(110, 50, 0, .5);
+  animation: sealPulse 2s ease-in-out infinite;
+  transition: transform .5s ease, opacity .4s ease;
+}
+.env-seal i { font-style: normal; font-family: "Tiro Devanagari Sanskrit", serif; font-size: 2rem; color: #7d1a10; text-shadow: 0 1px 0 rgba(255, 240, 190, .7); }
+.envelope.open { animation: none; cursor: default; }
+.envelope.open .env-seal { transform: scale(1.6) rotate(25deg); opacity: 0; animation: none; }
+.envelope.open .env-flap { transform: rotateX(180deg); z-index: 1; }
+.envelope.open .env-peek { transform: translateY(-62%); }
+
+.letter-card {
+  position: relative;
+  max-width: 460px; margin: 0 auto;
+  padding: 26px 22px 30px;
+  text-align: left;
+  font-family: "Kalam", cursive; font-size: 1.12rem; line-height: 1.75;
+  color: var(--text);
+  border-radius: 6px;
+  background:
+    repeating-linear-gradient(180deg, transparent 0 calc(1.75em - 1px), rgba(201, 52, 32, .13) calc(1.75em - 1px) 1.75em) 0 66px,
+    radial-gradient(ellipse at 50% 0%, #fffef8, transparent 70%),
+    linear-gradient(180deg, #fffaf0, #fff0d4);
+  box-shadow: 0 0 0 2px var(--gold), 0 0 0 6px #fff7e8, 0 0 0 8px var(--red), 0 20px 40px rgba(110, 26, 16, .3);
+  transform-origin: top center;
+  animation: unfold 1.1s cubic-bezier(.2, .8, .2, 1) both;
+}
+.letter-card::before { /* red margin line, like a letter pad */
+  content: ""; position: absolute; top: 0; bottom: 0; left: 14px; width: 1.5px; background: rgba(201, 52, 32, .3);
+}
+.lt-head { text-align: center; font-family: "Yatra One", serif; color: var(--red); font-size: 1.2rem; margin-bottom: 6px; }
+.lt-to {
+  font-weight: 700; font-size: 1.35rem; color: var(--red);
+  animation: write 1s ease .4s both;
+}
+.lt-line { margin-top: 8px; animation: write 1.4s ease var(--d, 1s) both; }
+.lt-line b { color: var(--red); }
+.lt-sign { text-align: right; margin-top: 16px; }
+.lt-stamp {
+  position: absolute; right: 16px; top: 16px;
+  width: 46px; height: 46px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center; font-size: 1.4rem;
+  border: 2px dashed rgba(201, 52, 32, .5);
+  transform: rotate(-12deg);
+  animation: stamp .6s cubic-bezier(.3, 1.6, .5, 1) 3.8s both;
+}
+body.en .letter-card { font-family: "Kalam", "Poppins", cursive; }
+
+@keyframes envFloat { 0%, 100% { transform: translateY(0) rotate(-1deg); } 50% { transform: translateY(-8px) rotate(1deg); } }
+@keyframes sealPulse { 0%, 100% { box-shadow: 0 0 0 4px rgba(255, 217, 112, .35), 0 4px 10px rgba(0, 0, 0, .45), inset 0 -3px 6px rgba(110, 50, 0, .5); } 50% { box-shadow: 0 0 0 12px rgba(255, 217, 112, 0), 0 4px 10px rgba(0, 0, 0, .45), inset 0 -3px 6px rgba(110, 50, 0, .5); } }
+@keyframes unfold {
+  0% { opacity: 0; transform: perspective(900px) rotateX(-75deg) scaleY(.6); }
+  60% { opacity: 1; }
+  100% { transform: none; }
+}
+@keyframes write { from { clip-path: inset(-1em 100% -1em -1em); opacity: .3; } to { clip-path: inset(-1em -1em -1em -1em); opacity: 1; } }
+@keyframes stamp { from { opacity: 0; transform: scale(2.4) rotate(-40deg); } to { opacity: 1; transform: rotate(-12deg); } }
+
+/* ===== Touch sparkles ===== */
+#touchFx { position: fixed; inset: 0; pointer-events: none; z-index: 70; }
+#touchFx span {
+  position: absolute; width: 7px; height: 7px; margin: -3.5px 0 0 -3.5px;
+  border-radius: 50%;
+  box-shadow: 0 0 8px 2px rgba(255, 200, 80, .8);
+  animation: tfx .75s cubic-bezier(.2, .8, .3, 1) forwards;
+}
+@keyframes tfx { to { transform: translate(var(--x), var(--y)) scale(.2); opacity: 0; } }
+
+/* ===== Cards: a gold shine passes over each card as it appears ===== */
+.card.reveal::after {
+  content: ""; position: absolute; inset: 0; border-radius: 20px; pointer-events: none;
+  background: linear-gradient(115deg, transparent 35%, rgba(255, 248, 220, .7) 48%, rgba(255, 217, 112, .35) 52%, transparent 65%) no-repeat;
+  background-size: 250% 100%; background-position: 160% 0;
+}
+.card.reveal.in::after { animation: cardShine 1.8s ease .35s; }
+@keyframes cardShine { from { background-position: 160% 0; } to { background-position: -60% 0; } }
+.reveal h2 { opacity: 0; transform: translateY(12px) scale(.94); transition: opacity .8s ease .25s, transform .8s cubic-bezier(.2, .9, .3, 1.3) .25s; }
+.reveal.in h2 { opacity: 1; transform: none; }
+.reveal.in h2::before, .reveal.in h2::after { display: inline-block; animation: spin 7s linear infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  .envelope, .lt-hint, .env-seal, .letter-card, .lt-to, .lt-line, .lt-stamp { animation: none; }
+  .card.reveal.in::after { animation: none; }
+  .reveal h2 { opacity: 1; transform: none; }
+}

@@ -177,6 +177,29 @@
       <p class="puja-hint reveal" data-en="Tap Lord Vishnu&#x27;s picture to offer flowers">पुष्प अर्पित करने के लिए भगवान के चित्र को स्पर्श करें</p>
     </section>
 
+    <!-- ===== A sealed letter for the guest ===== -->
+    <section class="letter-sec reveal" id="letterSec">
+      <p class="lt-hint" id="letterHint" data-en="✉️ A letter for you — tap the seal to open">✉️ आपके लिए एक पत्र — खोलने के लिए मुहर को छुएँ</p>
+      <div class="envelope" id="envelope" role="button" tabindex="0" aria-label="पत्र खोलें" data-en-label="Open the letter">
+        <div class="env-back"></div>
+        <div class="env-peek"><span>॥ श्री हरि ॥</span></div>
+        <div class="env-front">
+          <p class="env-to"><small data-en="To,">सेवा में,</small><b id="envName">समस्त स्वजन</b></p>
+        </div>
+        <div class="env-flap"></div>
+        <span class="env-seal" aria-hidden="true"><i>ॐ</i></span>
+      </div>
+      <article class="letter-card" id="letterCard" hidden>
+        <p class="lt-head">॥ श्री हरि ॥</p>
+        <p class="lt-to" id="letterTo">प्रिय स्वजन,</p>
+        <p class="lt-line" data-en="Jai Shri Hari 🙏">सादर जय श्री हरि 🙏</p>
+        <p class="lt-line" data-en="By the grace of Bhagwan Shri Hari Vishnu, our family is holding the &lt;b&gt;Ekadashi Udyapan &amp;amp; Akhand Harikirtan&lt;/b&gt; from &lt;b&gt;19 to 21 November 2026&lt;/b&gt; in our birthplace, &lt;b&gt;Village Murhi&lt;/b&gt;.">भगवान श्री हरि विष्णु की असीम कृपा से हमारे परिवार द्वारा <b>एकादशी उद्यापन एवं अखण्ड हरिकीर्तन</b> का आयोजन <b>19 से 21 नवंबर 2026</b> तक हमारी जन्मभूमि <b>ग्राम मुर्हीं</b> में किया जा रहा है।</p>
+        <p class="lt-line" data-en="Your presence on this holy occasion would be our good fortune. Please come with your family and bless us.">इस पावन अवसर पर आपकी उपस्थिति हमारे लिए सौभाग्य होगी। कृपया सपरिवार पधारकर हमें कृतार्थ करें।</p>
+        <p class="lt-sign lt-line" data-en="Awaiting your arrival,&lt;br&gt;&lt;b&gt;The Nivedak family, Village Murhi&lt;/b&gt;">आपके शुभागमन की प्रतीक्षा में,<br><b>निवेदक परिवार, ग्राम मुर्हीं</b></p>
+        <span class="lt-stamp" aria-hidden="true">🪔</span>
+      </article>
+    </section>
+
     <section class="card reveal center">
       <span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span>
       <p class="sadar" data-en="&lt;span class=&quot;diya-ico&quot;&gt;🪔&lt;/span&gt; A Warm Invitation &lt;span class=&quot;diya-ico&quot;&gt;🪔&lt;/span&gt;"><span class="diya-ico">🪔</span> सादर आमंत्रण <span class="diya-ico">🪔</span></p>
@@ -437,6 +460,7 @@
   </svg>
 
   <audio id="song" src="assets/song.mp3" preload="auto" loop></audio>
+  <div id="touchFx" aria-hidden="true"></div>
   <script src="name-code.js"></script>
   <script src="app.js"></script>
 </body>

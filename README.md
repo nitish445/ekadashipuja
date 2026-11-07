@@ -23,6 +23,10 @@ Old `?guest=Name` links still work. Without a name, the page looks like the orig
   rises in with a blur, then a gold shimmer passes over it, with twinkling stars, side ornaments
   and an underline that draws itself.
 - Browser tab title starts with the guest's name.
-- Inside the invitation: a shimmering “आदरणीय … — आपकी प्रतीक्षा रहेगी 🙏” banner.
+- Inside the invitation: a sealed red envelope addressed “सेवा में, <name>” with a gold ॐ seal.
+  Tapping the seal opens the flap, the letter slides out and unfolds, and each line is written
+  out by hand (“प्रिय <name>, …”). Golden sparkles follow every tap on the screen, and each card
+  gets a gold shine as it scrolls into view. The WhatsApp reply is signed with the guest's name.
+- Also inside the invitation: a shimmering “आदरणीय … — आपकी प्रतीक्षा रहेगी 🙏” banner.
 
 It is a static site with no build step, so it deploys to Vercel as is.

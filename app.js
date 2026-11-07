@@ -92,12 +92,14 @@
     }
   }
   function renderGuest() {
+    // the sealed letter is addressed to the guest (or to everyone)
+    $("envName").textContent = guest || T("समस्त स्वजन", "Family & Friends");
+    $("letterTo").textContent = guest ? T(`प्रिय ${guest},`, `Dear ${guest},`) : T("प्रिय स्वजन,", "Dear family & friends,");
     if (!guest) return;
     $("guestLine").textContent = T(`आदरणीय ${guest} — आपकी प्रतीक्षा रहेगी 🙏`, `Dear ${guest} — we look forward to welcoming you 🙏`);
   }
   if (guest) {
     document.body.classList.add("has-guest");
-    document.title = `${guest} · ${document.title}`;
     fillName($("gateName"));
     renderGuest();
     $("guestLine").hidden = false;
@@ -353,6 +355,45 @@
     els.forEach((e) => io.observe(e));
   }
 
+  // ----- Sealed letter: tap the seal, the envelope opens and the letter unfolds -----
+  const envelope = $("envelope");
+  document.querySelectorAll("#letterCard .lt-line").forEach((l, i) => l.style.setProperty("--d", 0.7 + i * 0.75 + "s"));
+  function showLetter() {
+    envelope.hidden = true;
+    $("letterHint").hidden = true;
+    $("letterCard").hidden = false;
+  }
+  function openLetter() {
+    if (envelope.classList.contains("open")) return;
+    envelope.classList.add("open");
+    bell(880, 0.25);
+    setTimeout(() => burstPetals(18), 600);
+    setTimeout(showLetter, reduceMotion ? 300 : 1900);
+  }
+  if (capture) showLetter();
+  envelope.addEventListener("click", openLetter);
+  envelope.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openLetter(); } });
+
+  // ----- Golden sparkles wherever the screen is touched -----
+  if (!reduceMotion && !capture) {
+    const fx = $("touchFx");
+    document.addEventListener("pointerdown", (e) => {
+      if (document.body.classList.contains("locked")) return;
+      for (let k = 0; k < 9; k++) {
+        const s = document.createElement("span");
+        const a = (Math.PI * 2 * k) / 9 + Math.random() * 0.5;
+        const d = 26 + Math.random() * 34;
+        s.style.left = e.clientX + "px";
+        s.style.top = e.clientY + "px";
+        s.style.setProperty("--x", Math.cos(a) * d + "px");
+        s.style.setProperty("--y", Math.sin(a) * d + "px");
+        s.style.background = k % 3 ? "#ffd970" : "#ff9f1c";
+        fx.appendChild(s);
+        setTimeout(() => s.remove(), 800);
+      }
+    }, { passive: true });
+  }
+
   // ----- Conch (shankh) sound, synthesised -----
   function shankh(dur = 2.6, vol = 0.32) {
     try {
@@ -605,8 +646,8 @@
     $("waBtn").href =
       `https://wa.me/${PHONE}?text=` +
       encodeURIComponent(T(
-        `जय श्री हरि 🙏\n${TITLE} के निमंत्रण के लिए धन्यवाद। हम अवश्य उपस्थित होंगे।`,
-        `Jai Shri Hari 🙏\nThank you for the invitation to the ${TITLE_EN}. We will surely be there.`
+        `जय श्री हरि 🙏\n${TITLE} के निमंत्रण के लिए धन्यवाद। हम अवश्य उपस्थित होंगे।` + (guest ? `\n\n— ${guest}` : ""),
+        `Jai Shri Hari 🙏\nThank you for the invitation to the ${TITLE_EN}. We will surely be there.` + (guest ? `\n\n— ${guest}` : "")
       ));
   }
 
@@ -746,7 +787,7 @@
       if (el.dataset.hiLabel === undefined) el.dataset.hiLabel = el.getAttribute("aria-label") || "";
       el.setAttribute("aria-label", lang === "en" ? el.dataset.enLabel : el.dataset.hiLabel);
     });
-    document.title = T(
+    document.title = (guest ? guest + " · " : "") + T(
       "सादर आमंत्रण · एकादशी उद्यापन एवं अखण्ड हरिकीर्तन",
       "You Are Invited · Ekadashi Udyapan & Akhand Harikirtan"
     );
