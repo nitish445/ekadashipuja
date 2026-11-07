@@ -9,11 +9,16 @@ with each guest's name shown on the front page in animated golden letters.
 2. Type the guests' names, one per line (e.g. `शर्मा परिवार`, `Sunita Ji`).
 3. For each name, tap **WhatsApp** to send the message and link, or copy the link.
 
-The link looks like `https://<your-site>/?guest=शर्मा%20परिवार` (add `&lang=en` for English).
-`?to=` and `?name=` work too. Without a name, the page looks like the original invitation.
+The link looks like `https://<your-site>/?i=h1nMJ2qvO2dZjOD738`. The name and language are turned
+into a code, so the link doesn't show the name, and once the page opens the address bar is
+cleaned to just `https://<your-site>/`. A refresh in the same tab keeps the name.
+Old `?guest=Name` links still work. Without a name, the page looks like the original invitation.
 
 ## What the guest sees
 
+- First, a full-screen intro: “॥ जय श्री हरि ॥”, “आदरणीय”, then the guest's name appears letter by
+  letter in glowing gold with a burst of light, then “आपके लिए एक विशेष निमंत्रण है 🙏”.
+  After about 7 seconds (or a tap) it fades into the usual front page.
 - Front page: “विशेष आमंत्रण / A personal invitation for”, then the guest's name. Each letter
   rises in with a blur, then a gold shimmer passes over it, with twinkling stars, side ornaments
   and an underline that draws itself.

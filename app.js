@@ -21,7 +21,24 @@
     get(k) { try { return localStorage.getItem(k); } catch (_) { return null; } },
     set(k, v) { try { localStorage.setItem(k, v); } catch (_) { /* storage blocked */ } },
   };
-  const urlLang = new URLSearchParams(location.search).get("lang");
+  // ----- Personal invitation -----
+  // New links: ?i=<code> (name hidden). Old links: ?guest= / ?to= / ?name= still work.
+  const qs = new URLSearchParams(location.search);
+  const sess = {
+    get(k) { try { return sessionStorage.getItem(k); } catch (_) { return null; } },
+    set(k, v) { try { sessionStorage.setItem(k, v); } catch (_) { /* storage blocked */ } },
+  };
+  let invite = qs.get("i") && window.NameCode ? NameCode.decode(qs.get("i")) : null;
+  if (!invite && (qs.get("guest") || qs.get("to") || qs.get("name"))) invite = { name: qs.get("guest") || qs.get("to") || qs.get("name"), lang: qs.get("lang") };
+  if (invite) sess.set("invite", JSON.stringify(invite));
+  else if (!capture) { try { invite = JSON.parse(sess.get("invite")); } catch (_) { invite = null; } } // keeps the name after a refresh
+  const guest = ((invite && invite.name) || "").replace(/\s+/g, " ").trim().slice(0, 60);
+  // hide the code / name from the address bar once read
+  if (guest && !capture && (qs.has("i") || qs.has("guest") || qs.has("to") || qs.has("name"))) {
+    try { history.replaceState(null, "", location.pathname + location.hash); } catch (_) { /* ignore */ }
+  }
+
+  const urlLang = qs.get("lang") || (invite && invite.lang);
   let lang = urlLang === "en" || urlLang === "hi" ? urlLang : capture ? "hi" : store.get("lang") === "en" ? "en" : "hi";
   const T = (hi, en) => (lang === "en" ? en : hi);
   function setLabel(el, hi, en) {
@@ -30,17 +47,12 @@
     el.innerHTML = T(hi, en);
   }
 
-  // ----- Personal invitation: ?guest=Sharma%20Parivar (also ?to= / ?name=) -----
-  const qs = new URLSearchParams(location.search);
-  const guest = (qs.get("guest") || qs.get("to") || qs.get("name") || "").replace(/\s+/g, " ").trim().slice(0, 60);
-
   // split into letters without breaking Devanagari conjuncts / matras
   function graphemes(str) {
     if (window.Intl && Intl.Segmenter) return [...new Intl.Segmenter(undefined, { granularity: "grapheme" }).segment(str)].map((x) => x.segment);
     return str.match(/\S[\u0900-\u0903\u093A-\u094F\u0951-\u0957\u0962\u0963\u200C\u200D]*(?:\u094D\S[\u0900-\u0903\u093A-\u094F\u0951-\u0957]*)*|\s/g) || [str];
   }
-  function renderGateName() {
-    const box = $("gateName");
+  function fillName(box) {
     box.textContent = "";
     box.setAttribute("aria-label", guest);
     // keep words together so a long name wraps between words only
@@ -66,6 +78,19 @@
     box.classList.toggle("long", len > 16);
     box.classList.toggle("xlong", len > 28);
   }
+  function addStars(box, n, delay) {
+    if (reduceMotion) return;
+    for (let k = 0; k < n; k++) {
+      const s = document.createElement("span");
+      s.className = "nstar";
+      s.style.left = Math.random() * 100 + "%";
+      s.style.top = Math.random() * 100 + "%";
+      s.style.animationDelay = delay + Math.random() * 3 + "s";
+      s.style.animationDuration = 1.6 + Math.random() * 1.8 + "s";
+      s.style.setProperty("--k", 0.5 + Math.random() * 0.8);
+      box.appendChild(s);
+    }
+  }
   function renderGuest() {
     if (!guest) return;
     $("guestLine").textContent = T(`आदरणीय ${guest} — आपकी प्रतीक्षा रहेगी 🙏`, `Dear ${guest} — we look forward to welcoming you 🙏`);
@@ -73,23 +98,46 @@
   if (guest) {
     document.body.classList.add("has-guest");
     document.title = `${guest} · ${document.title}`;
-    renderGateName();
+    fillName($("gateName"));
     renderGuest();
     $("guestLine").hidden = false;
-    $("gateGuest").hidden = false;
-    // twinkling stars around the name
+    addStars($("nameSparks"), 14, 1.2);
+  }
+
+  // ----- Name intro: the guest's name alone on screen, then the temple doors -----
+  const intro = $("intro");
+  if (guest && !capture) {
+    fillName($("introName"));
+    addStars($("introStars"), 22, 0.8);
+    intro.hidden = false;
+    document.body.classList.add("intro-on");
+    // petals of light bursting out of the name
     if (!reduceMotion) {
-      for (let k = 0; k < 14; k++) {
-        const s = document.createElement("span");
-        s.className = "nstar";
-        s.style.left = Math.random() * 100 + "%";
-        s.style.top = Math.random() * 100 + "%";
-        s.style.animationDelay = 1.2 + Math.random() * 3 + "s";
-        s.style.animationDuration = 1.6 + Math.random() * 1.8 + "s";
-        s.style.setProperty("--k", 0.5 + Math.random() * 0.8);
-        $("nameSparks").appendChild(s);
+      const burst = $("introBurst");
+      for (let k = 0; k < 28; k++) {
+        const r = document.createElement("span");
+        r.style.setProperty("--a", (360 / 28) * k + "deg");
+        r.style.setProperty("--d", 0.9 + Math.random() * 0.8);
+        burst.appendChild(r);
       }
     }
+    const n = $("introName").style.getPropertyValue("--n") | 0;
+    intro.style.setProperty("--n", n);
+    let ended = false;
+    const endIntro = () => {
+      if (ended) return;
+      ended = true;
+      intro.classList.add("out");
+      document.body.classList.remove("intro-on");
+      // the front page's own name animation starts now
+      setTimeout(() => { $("gateGuest").hidden = false; }, 350);
+      setTimeout(() => intro.remove(), 1600);
+    };
+    intro.addEventListener("click", () => { bell(700, 0.3); endIntro(); });
+    setTimeout(endIntro, reduceMotion ? 4000 : 6500 + n * 90);
+  } else {
+    intro.remove();
+    if (guest) $("gateGuest").hidden = false;
   }
 
   // ----- Mandalas (drawn in SVG) -----

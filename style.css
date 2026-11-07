@@ -1178,3 +1178,130 @@ body.has-guest .gate { --m: clamp(110px, min(44vw, 20vh), 240px); }
   .g-name-frame::after { animation: none; transform: none; }
   .guest::after { display: none; }
 }
+
+/* ===== Name intro (first screen of a personal link) ===== */
+.intro {
+  position: fixed; inset: 0; z-index: 50;
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden; cursor: pointer;
+  background: radial-gradient(ellipse 80% 60% at 50% 50%, #5e0d07 0%, #2a0402 55%, #0d0100 100%);
+  color: var(--cream);
+  text-align: center;
+  transition: opacity 1.2s ease .2s;
+  -webkit-tap-highlight-color: transparent;
+}
+.intro[hidden] { display: none; }
+body.intro-on .lang-switch { opacity: 0; pointer-events: none; }
+.in-rays {
+  position: absolute; left: 50%; top: 50%;
+  width: 200vmax; height: 200vmax; margin: -100vmax 0 0 -100vmax;
+  background: repeating-conic-gradient(from 0deg, rgba(255, 205, 110, .14) 0 2.5deg, transparent 2.5deg 10deg);
+  -webkit-mask-image: radial-gradient(circle, #000 0, transparent 40%);
+          mask-image: radial-gradient(circle, #000 0, transparent 40%);
+  opacity: 0;
+  animation: inFade 2s ease .4s forwards, spin 90s linear infinite;
+}
+.in-glow {
+  position: absolute; left: 50%; top: 50%;
+  width: min(120vw, 900px); height: min(120vw, 900px);
+  transform: translate(-50%, -50%) scale(.2);
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 210, 120, .45) 0%, rgba(255, 150, 50, .18) 35%, transparent 65%);
+  opacity: 0;
+  animation: inGlow 2.4s cubic-bezier(.2, .8, .3, 1) .3s forwards, inBreath 4s ease-in-out 2.7s infinite;
+}
+.in-content { position: relative; z-index: 2; padding: 0 16px; display: flex; flex-direction: column; align-items: center; max-width: 100%; }
+.in-pre {
+  font-family: "Yatra One", serif; font-size: clamp(1rem, 4vw, 1.25rem);
+  color: var(--gold-light); letter-spacing: .06em;
+  opacity: 0; animation: inUp 1s ease .2s forwards;
+}
+.in-label {
+  margin-top: 14px;
+  font-family: "Yatra One", serif; font-size: clamp(1.3rem, 5.5vw, 1.8rem);
+  color: var(--cream); text-shadow: 0 2px 8px #000;
+  opacity: 0; animation: inUp 1s ease .6s forwards;
+}
+body.en .in-label, body.en .in-sub { font-family: "Playfair Display", serif; font-style: italic; }
+.in-name-wrap { position: relative; margin: 6px 0 4px; padding: 10px 4px; }
+.in-name {
+  --n: 10;
+  position: relative;
+  font-family: "Yatra One", "Playfair Display", serif; font-weight: 400;
+  font-size: clamp(2.8rem, 14vw, 5.6rem);
+  line-height: 1.2;
+  filter: drop-shadow(0 0 18px rgba(255, 190, 60, .6)) drop-shadow(0 4px 4px rgba(0, 0, 0, .8));
+}
+.in-name.long { font-size: clamp(2.2rem, 10.5vw, 4.4rem); }
+.in-name.xlong { font-size: clamp(1.7rem, 8vw, 3.4rem); }
+body.en .in-name { font-family: "Playfair Display", "Yatra One", serif; font-weight: 700; }
+.in-name .w { display: inline-block; white-space: nowrap; }
+.in-name .ch {
+  display: inline-block; white-space: pre;
+  padding: .3em .3em .25em; margin: -.3em -.3em -.25em;
+  background: linear-gradient(100deg, #b77a08 0%, #ffd970 25%, #fffbe8 42%, #e9a417 58%, #ffd970 78%, #b77a08 100%);
+  background-size: 300% 100%;
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  opacity: 0;
+  animation:
+    inLetter 1.1s cubic-bezier(.2, .9, .3, 1.2) calc(1.1s + var(--i) * 110ms) forwards,
+    nameShine 3.6s ease-in-out calc(2.2s + var(--n) * 110ms + var(--i) * 50ms) infinite;
+}
+/* rays of light that burst out once the name is complete */
+.in-burst { position: absolute; left: 50%; top: 50%; width: 0; height: 0; }
+.in-burst span {
+  position: absolute; left: 0; top: 0;
+  width: 3px; height: 70px; margin: -35px 0 0 -1.5px;
+  border-radius: 3px;
+  background: linear-gradient(to top, transparent, #ffe9a8 60%, #fff);
+  transform: rotate(var(--a)) translateY(0) scaleY(.2);
+  opacity: 0;
+  animation: inRay 1.3s cubic-bezier(.1, .7, .3, 1) calc(1.6s + var(--n, 10) * 110ms) forwards;
+}
+.in-stars { position: absolute; inset: -20px -10px; pointer-events: none; }
+.in-line {
+  width: min(70vw, 420px); height: 2px; margin: 4px 0 12px;
+  background: linear-gradient(90deg, transparent, var(--gold) 20%, #fff1b8 50%, var(--gold) 80%, transparent);
+  box-shadow: 0 0 12px rgba(255, 200, 80, .9);
+  transform: scaleX(0);
+  animation: nameLine 1.3s cubic-bezier(.3, .8, .3, 1) calc(1.9s + var(--n, 10) * 110ms) forwards;
+}
+.in-sub, .in-tap { opacity: 0; }
+.in-sub {
+  font-family: "Yatra One", serif; font-size: clamp(1.1rem, 4.6vw, 1.5rem);
+  color: var(--gold-light); text-shadow: 0 2px 8px #000;
+  animation: inUp 1s ease calc(2.4s + var(--n, 10) * 110ms) forwards;
+}
+.in-tap {
+  margin-top: 26px;
+  font-family: "Poppins", sans-serif; font-size: .82rem; letter-spacing: .05em;
+  color: var(--cream);
+  animation: inUp 1s ease calc(3.2s + var(--n, 10) * 110ms) forwards, inBlink 2s ease-in-out calc(4.2s + var(--n, 10) * 110ms) infinite;
+}
+/* leaving: the name rises into a flash of light */
+.intro.out { opacity: 0; pointer-events: none; }
+.intro.out .in-content { transform: scale(1.25); opacity: 0; filter: blur(4px); transition: transform 1.3s cubic-bezier(.5, 0, .3, 1), opacity 1s ease .2s, filter 1s ease .2s; }
+.intro.out .in-glow { animation: inFlash 1.2s ease-out forwards; }
+
+@keyframes inFade { to { opacity: 1; } }
+@keyframes inUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+@keyframes inGlow { to { opacity: 1; transform: translate(-50%, -50%) scale(1); } }
+@keyframes inBreath { 0%, 100% { opacity: .8; } 50% { opacity: 1; } }
+@keyframes inFlash { 0% { opacity: 1; transform: translate(-50%, -50%) scale(1); } 100% { opacity: 0; transform: translate(-50%, -50%) scale(2.6); } }
+@keyframes inLetter {
+  0% { opacity: 0; transform: translateY(.6em) scale(.3); filter: blur(10px) brightness(3); }
+  55% { opacity: 1; filter: blur(0) brightness(1.8); }
+  100% { opacity: 1; transform: none; filter: none; }
+}
+@keyframes inRay {
+  0% { opacity: 0; transform: rotate(var(--a)) translateY(0) scaleY(.2); }
+  25% { opacity: 1; }
+  100% { opacity: 0; transform: rotate(var(--a)) translateY(calc(-170px * var(--d, 1))) scaleY(1); }
+}
+@keyframes inBlink { 0%, 100% { opacity: .75; } 50% { opacity: .35; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .in-rays, .in-glow, .in-pre, .in-label, .in-sub, .in-tap, .in-name .ch { animation: none; opacity: 1; }
+  .in-glow { transform: translate(-50%, -50%); }
+  .in-line { animation: none; transform: none; }
+}

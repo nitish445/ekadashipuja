@@ -89,7 +89,7 @@
     <section class="card">
       <label for="names">नाम लिखें · Guest names <span style="font-weight:400">(एक पंक्ति में एक नाम · one per line)</span></label>
       <textarea id="names" placeholder="श्री रामेश्वर शर्मा जी&#10;वर्मा परिवार&#10;Sunita Ji"></textarea>
-      <small class="help">उदाहरण: “शर्मा परिवार”, “श्री मोहन जी एवं परिवार”। नाम निमंत्रण के मुख्य पृष्ठ पर चमकते सुनहरे अक्षरों में दिखेगा।</small>
+      <small class="help">उदाहरण: “शर्मा परिवार”, “श्री मोहन जी एवं परिवार”। निमंत्रण खुलते ही सबसे पहले उनका नाम सुनहरे अक्षरों में दिखेगा। लिंक में नाम नहीं दिखता।</small>
       <div class="row">
         <span>भाषा · Language:</span>
         <div class="seg" id="langSeg" role="group" aria-label="Language">
@@ -113,6 +113,7 @@
   </div>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
+  <script src="name-code.js"></script>
   <script>
   (() => {
     const $ = (id) => document.getElementById(id);
@@ -130,12 +131,8 @@
     $("msg").value = store.get("mk-msg-" + lang) || DEFAULT_MSG[lang];
 
     const clean = (n) => n.replace(/\s+/g, " ").trim().slice(0, 60);
-    const linkFor = (name) => {
-      const u = new URL(base);
-      u.searchParams.set("guest", name);
-      if (lang === "en") u.searchParams.set("lang", "en");
-      return u.href;
-    };
+    // the name is turned into a code, so the link doesn't show it
+    const linkFor = (name) => base + "?i=" + NameCode.encode(name, lang);
     const message = (name) => $("msg").value.split("{name}").join(name).split("{link}").join(linkFor(name));
 
     let toastT;
